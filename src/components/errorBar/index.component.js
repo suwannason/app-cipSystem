@@ -21,7 +21,7 @@ class ErrorBar extends React.Component {
     render() {
         return (
             <Snackbar
-                anchorOrigin={{ vertical: 'top', horizontal: 'right', }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right', }}
                 open={this.state.open}
                 onClose={this.handleClose}
                 TransitionComponent={(props) => <><Slide {...props} direction="left" /></>}

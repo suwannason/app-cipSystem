@@ -64,7 +64,10 @@ class Import extends Component {
                 </Grid>
                 <Card style={{ flexGrow: 1, padding: '10px' }} elevation={0}>
                     <center>
-                        <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: '#7a57ce', color: 'aliceblue' }} onClick={this.save}>Save</Button>
+                        <Button
+                        variant="outlined"
+                        style={{ marginRight: 'calc(2%)', backgroundColor: '#7a57ce', color: 'aliceblue' }}
+                        onClick={this.save}>Upload</Button>
                       
                     </center>
 

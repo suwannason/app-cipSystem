@@ -12,6 +12,8 @@ import CIPimport from '../pages/CSVupload/import.component';
 
 import CIPexport from '../pages/CIPexport/index.component';
 
+import { reload } from '../middleware/index';
+
 class Navbar extends Component {
     constructor() {
         super();
@@ -43,6 +45,11 @@ class Navbar extends Component {
     cipExport() {
         this.setState({ element: <CIPexport /> })
     }
+    logout() {
+        localStorage.clear();
+
+        reload();
+    }
     render() {
         return (
             <>
@@ -50,7 +57,7 @@ class Navbar extends Component {
                     <Toolbar style={{ backgroundColor: '#c1afe4' }}>
                         <IconButton> <Menu style={{ color: '#8565c4' }} /> </IconButton>
                         <Typography variant="h6" style={{ flexGrow: 1 }}>CIP system</Typography>
-                        <Button style={{ backgroundColor: '#d22e72c9', color: 'aliceblue' }}> logout </Button>
+                        <Button style={{ backgroundColor: '#d22e72c9', color: 'aliceblue' }} onClick={this.logout}> logout </Button>
                     </Toolbar>
                 </AppBar>
 
