@@ -11,6 +11,8 @@ import CIPhistpry from '../pages/CIPhistory/index.component';
 import CIPimport from '../pages/CSVupload/import.component';
 
 import CIPexport from '../pages/CIPexport/index.component';
+import ITC from '../pages/itc/index.component';
+import ACC from '../pages/acc/index.component';
 
 import { reload } from '../middleware/index';
 
@@ -27,14 +29,19 @@ class Navbar extends Component {
         this.cipHistory = this.cipHistory.bind(this);
         this.cipImport = this.cipImport.bind(this);
         this.cipExport = this.cipExport.bind(this);
+        this.itc = this.itc.bind(this);
+        this.acc = this.acc.bind(this);
     }
 
     componentDidMount() {
         this.cipList();
     }
-    
+
     cipList() {
         this.setState({ element: <CIPlist /> })
+    }
+    acc(page) {
+        this.setState({ element: <ACC page={page} />})
     }
     cipHistory() {
         this.setState({ element: <CIPhistpry /> })
@@ -44,6 +51,9 @@ class Navbar extends Component {
     }
     cipExport() {
         this.setState({ element: <CIPexport /> })
+    }
+    itc(page) {
+        this.setState({ element: <ITC page={page} /> })
     }
     logout() {
         localStorage.clear();
@@ -61,9 +71,9 @@ class Navbar extends Component {
                     </Toolbar>
                 </AppBar>
 
-                <Grid container spacing={0} style={{ marginTop: 'calc(6%)', flexGrow: 1 }}>
-                    <Grid item xs={3} style={{ padding: '10px' }}>
-                        <Container maxWidth="sm">
+                <Grid container spacing={0} style={{ marginTop: 'calc(8%)', flexGrow: 1 }}>
+                    <Grid item xs={3}>
+                        <Container maxWidth="xl">
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="a" label="Search">
@@ -88,18 +98,26 @@ class Navbar extends Component {
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="d" label="ACC">
-                                    <TreeItem nodeId="2" label="Waiting FA after approval" />
-                                    <TreeItem nodeId="3" label={'On waiting GM & MGR'} />
-                                    <TreeItem nodeId="4" label={'Approval budget code diff'} />
+                                    <TreeItem nodeId="2" label="Waiting FA after approval" onClick={() => this.acc('waitingFA')} />
+                                    <TreeItem nodeId="3" label={'On waiting GM & MGR'} onClick={() => this.acc('waitingGM')} />
+                                    <TreeItem nodeId="4" label={'Approval budget code diff'} onClick={() => this.acc('approvalBudget')} />
+                                </TreeItem>
+                            </TreeView>
+
+
+                            <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                <TreeItem nodeId="d" label="ITC">
+                                    <TreeItem nodeId="2" label="Waiting confirm" onClick={() => this.itc('waiting')} />
+                                    <TreeItem nodeId="3" label={'On confirmed'} onClick={() => this.itc('confirmed')} />
                                 </TreeItem>
                             </TreeView>
 
                         </Container>
                     </Grid>
-                    <Grid item xs={9} style={{ paddingRight: 'calc(2%)', }}>
-
-                       
+                    <Grid item xs={9}>
+                        <Container maxWidth="xl">
                             {this.state.element}
+                        </Container>
 
                     </Grid>
                 </Grid>

@@ -1,58 +1,199 @@
 
-import React, { Component, forwardRef } from 'react';
+import React, { Component, } from 'react';
 
-import Loading from '../../components/loading/index.component';
-import { Clear, Check, FilterList, FirstPage, LastPage, DeleteForever, Edit, Add, SaveAlt, ArrowForwardIos, Search, NavigateNext, ArrowBackIos, SortOutlined } from '@material-ui/icons';
+import { Grid, TextField, Button } from '@material-ui/core';
+import { app_jsonInstance } from '../../configurations/instance';
 
-import MatrialTable from 'material-table';
+import { reload } from '../../middleware/index';
 
-import { Box } from '@material-ui/core';
+import { DataGrid } from '@material-ui/data-grid';
+
+import DeptInput from './deptInput.component';
+
 
 class CIPlist extends Component {
+    constructor() {
+        super();
+
+        this.state = {
+            data: [],
+            all: [],
+            dataSelected: [],
+            deptInput: false,
+            cipNo: '',
+            name: '',
+        };
+        this.getData = this.getData.bind(this);
+        this.selectionRow = this.selectionRow.bind(this);
+        this.close = this.close.bind(this);
+        this.openDeptinput = this.openDeptinput.bind(this);
+        this.cipNoChange = this.cipNoChange.bind(this);
+        this.nameChange = this.nameChange.bind(this);
+    }
+
+    componentDidMount() {
+        this.getData();
+    }
+
+    close() {
+        this.setState({ deptInput: false, })
+    }
+    openDeptinput() {
+        this.setState({ deptInput: true, })
+    }
+    onSelectionModelChange(rows) {
+        console.log(rows);
+    }
+    async selectionRow(row) {
+
+        if (row.isSelected === true) {
+            this.state.dataSelected.push(row.data)
+        } else {
+
+            await this.setState({
+                dataSelected: this.state.dataSelected.filter(item => item.id !== row.data.id)
+            });
+        }
+
+        const input = document.getElementById('input');
+        if (this.state.dataSelected.length === 1) {
+            input.style.display = 'block'
+        } else {
+            input.style.display = 'none'
+        }
+
+    }
+    cipNoChange(event) {
+        this.setState({ cipNo: event.target.value });
+
+        if (event.target.value !== '') {
+            if (this.state.cipNo.length > event.target.value.length) {
+                this.setState({
+                    data: this.state.all.filter((item) => {
+
+                        return item.cipNo.indexOf(event.target.value) !== -1
+                    })
+                });
+            } else {
+                this.setState({
+                    data: this.state.data.filter((item) => {
+
+                        return item.cipNo.indexOf(event.target.value) !== -1
+                    })
+                });
+            }
+        } else {
+            this.setState({
+                data: this.state.all.filter((item) => {
+
+                    return item.cipNo.indexOf(event.target.value) !== -1
+                })
+            });
+        }
+    }
+    nameChange(event) {
+        this.setState({ name: event.target.value });
+
+        if (event.target.value !== '') {
+            if (this.state.cipNo !== '') {
+                if (event.target.value < this.state.name.length) {
+
+                    this.setState({
+                        data: this.state.all.filter((item) => {
+                            return item.cipNo.indexOf(this.state.cipNo) !== -1
+                        })
+                    });
+                } else {
+                    this.setState({
+                        data: this.state.data.filter((item) => {
+                            return item.name.indexOf(event.target.value) !== -1
+                        })
+                    });
+                }
+            } else {
+                this.setState({
+                    data: this.state.data.filter((item) => {
+                        return item.name.indexOf(event.target.value) !== -1
+                    })
+                })
+            }
+        } else {
+            this.setState({
+                data: this.state.all.filter((item) => {
+                    return item.cipNo.indexOf(this.state.cipNo) !== -1
+                })
+            })
+        }
+    }
+    async getData() {
+        try {
+            const response = await app_jsonInstance().get(`/cip/list`);
+
+            this.setState({ data: response.data.data, all: response.data.data })
+        } catch (error) {
+            console.log(error.stack);
+
+            if (error.response.status === 401) {
+                localStorage.clear();
+                reload();
+            }
+        }
+    }
+    download() {
+
+        alert('download')
+    }
     render() {
+        let deptInput;
+
+        if (this.state.deptInput === true) {
+            deptInput = <DeptInput close={this.close} />
+        }
+        const columns = [
+            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 130 },
+            { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'qty', headerName: 'Qty.', width: 80 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 130 },
+            { field: 'cc', headerName: 'CC', width: 80 },
+        ];
         return (
             <>
-                <Loading />
+                {deptInput}
+                {this.state.hiddenInput}
+                <Grid container spacing={1}>
+                    <Grid item xs={3}>
+                        <TextField label="CIP No." onChange={this.cipNoChange} value={this.state.cipNo} />
+                    </Grid>
 
-                <Box component="body" style={{ backgroundColor: '#c4eccb', padding: '10px', borderRadius: '10px' }}>
-                    <MatrialTable title="CIP list"
-                        icons={{
-                            Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-                            Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-                            Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-                            FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-                            LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-                            NextPage: forwardRef((props, ref) => <NavigateNext {...props} ref={ref} />),
-                            PreviousPage: forwardRef((props, ref) => <ArrowBackIos {...props} ref={ref} />),
-                            ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-                            SortArrow: forwardRef((props, ref) => <SortOutlined {...props} ref={ref} />),
-                            Delete: forwardRef((props, ref) => <DeleteForever {...props} ref={ref} />),
-                            Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-                            Add: forwardRef((props, ref) => <Add {...props} ref={ref} />),
-                            Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} style={{ width: '15px', height: '15px' }} />),
-                            DetailPanel: forwardRef((props, ref) => <ArrowForwardIos {...props} ref={ref} />),
-                            Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} style={{ color: '#192263' }} />),
-                        }}
-                        columns={
-                            [
-                                { title: 'CIP No.', field: 'pcName', cellStyle: { padding: '0 14px', width: '220px' }, align: 'center' },
-                                // { title: 'Fix Asset', field: 'fixAsset', cellStyle: { padding: '0 14px', } },
-                                { title: 'Sub CIP No.', field: 'statusUse', cellStyle: { padding: '0 14px', width: '60px' } },
-                                { title: 'Vendor', field: 'hwType', cellStyle: { padding: '0 14px', }, },
-                                { title: 'Name', field: 'mainUser', cellStyle: { padding: '0 14px', width: '180px' } },
-                                { title: 'Qty.', field: 'name', cellStyle: { padding: '0 14px', width: '140px' }, },
-                                { title: 'Total (THB)', field: 'lastName', cellStyle: { padding: '0 14px', width: '140px' }, },
-                                { title: 'CC', field: 'dept', cellStyle: { padding: '0 14px', } },
+                    <Grid item xs={3}>
+                        <TextField label="Name" onChange={this.nameChange} value={this.state.name} />
+                    </Grid>
 
-                            ]
-                        }
-                        options={{
-                            pageSize: 12,
-                            pageSizeOptions: [12]
+                    <Grid item xs={6}>
+                        <Button variant="outlined" id="input" style={{ backgroundColor: '#82b1da', color: 'aliceblue', display: 'none' }} onClick={this.openDeptinput}> Input </Button>
 
-                        }} />
+                    </Grid>
+                </Grid>
+                <div style={{ height: 550, width: '100%', marginTop: 'calc(1%)' }}>
+                    <DataGrid
+                        rows={this.state.data}
+                        columns={columns}
+                        pageSize={10}
+                        checkboxSelection
+                        onRowSelected={(row) => this.selectionRow(row)}
+                        // onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
+                        disableSelectionOnClick={true}
+                    />
+                </div>
 
-                </Box>
+                <Grid container spacing={0} style={{ marginTop: 'calc(1%)', textAlign: 'center' }}>
+                    <Grid item xs={12}>
+                        <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 93 177)', color: 'aliceblue', }} onClick={this.download}> Download </Button>
+                    </Grid>
+                </Grid>
+
             </>
         );
     }

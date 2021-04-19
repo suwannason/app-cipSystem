@@ -8,6 +8,9 @@ import { Grid, Button, Card } from '@material-ui/core';
 import { form_dataInstance } from '../../configurations/instance';
 
 import ErrorBar from '../../components/errorBar/index.component';
+import SuccessBar from '../../components/successBar/index.component';
+
+import { reload } from '../../middleware/index';
 
 
 class Import extends Component {
@@ -16,29 +19,58 @@ class Import extends Component {
         this.state = {
             files: [],
             error: false,
+            success: false,
             message: '',
+            element: null,
         };
         this.save = this.save.bind(this);
     }
+
+    componentDidMount() {
+
+        let element;
+
+        if (localStorage.getItem('dept') === 'ACC') {
+            element = <DropzoneArea
+                onChange={this.handleChange.bind(this)}
+                filesLimit={1}
+                showFileNames={true}
+                dropzoneText="Accouting upload"
+
+            />
+        } else {
+            element = <DropzoneArea
+                onChange={this.handleChange.bind(this)}
+                filesLimit={1}
+                showFileNames={true}
+                dropzoneText="User Upload"
+
+            />
+        }
+        this.setState({ element })
+    }
+
     handleChange(files) {
 
         this.setState({
             files,
         });
     }
-    save() {
-
+    async save() {
         try {
             if (this.state.files.length !== 0) {
                 let formdata = new FormData();
-                formdata.padding('files', this.state.files);
-                form_dataInstance().post(``, formdata)
+                formdata.append('file', this.state.files[0]);
+                await form_dataInstance().post(`/cip/upload`, formdata);
+
+                this.setState({ success: true, message: 'Upload success.'})
             } else {
                 this.setState({ message: 'No file selected.', error: true, })
             }
 
             setTimeout(() => {
-                this.setState({ error: false, })
+                this.setState({ error: false, success: false, })
+                reload();
             }, 2000);
         } catch (error) {
             console.log(error.stack);
@@ -46,29 +78,26 @@ class Import extends Component {
     }
     render() {
 
-        let error;
+        let error; let success;
         if (this.state.error === true) {
-
             error = <ErrorBar message={this.state.message} />
+        }
+        if (this.state.success === true) {
+            success = <SuccessBar message={this.state.message} />
         }
         return (
             <Grid container spacing={0}>
-                {error}
+                {error}{success}
                 <Grid item xs={12} style={{}}>
-                    <DropzoneArea
-                        onChange={this.handleChange.bind(this)}
-                        filesLimit={3}
-                        showFileNames={true}
-
-                    />
+                    {this.state.element}
                 </Grid>
                 <Card style={{ flexGrow: 1, padding: '10px' }} elevation={0}>
                     <center>
                         <Button
-                        variant="outlined"
-                        style={{ marginRight: 'calc(2%)', backgroundColor: '#7a57ce', color: 'aliceblue' }}
-                        onClick={this.save}>Upload</Button>
-                      
+                            variant="outlined"
+                            style={{ marginRight: 'calc(2%)', backgroundColor: '#7a57ce', color: 'aliceblue' }}
+                            onClick={this.save}>Upload</Button>
+
                     </center>
 
                 </Card>

@@ -7,6 +7,8 @@ import ErrorBar from '../../components/errorBar/index.component';
 
 import { none_headersInstance } from '../../configurations/instance';
 
+import { reload } from '../../middleware/index';
+
 class Login extends Component {
 
     constructor() {
@@ -35,9 +37,12 @@ class Login extends Component {
             }
             const response = await none_headersInstance().post(`/user/login`, body);
 
-            console.log(response);
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('dept', response.data.data.dept);
+            reload();
         } catch (error) {
             if (error.response.status === 400) {
+                console.log(error.response)
                 this.setState({
                     message: error.response.data.message || error.response.data.title,
                     error: true,
