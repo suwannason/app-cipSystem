@@ -7,6 +7,8 @@ import ErrorBar from '../../components/errorBar/index.component';
 
 import { none_headersInstance } from '../../configurations/instance';
 
+import Loading from '../../components/loading/index.component';
+
 import { reload } from '../../middleware/index';
 
 class Login extends Component {
@@ -18,6 +20,7 @@ class Login extends Component {
             password: '',
             error: false,
             message: '',
+            loading: false,
         };
         this.passwordChanged = this.passwordChanged.bind(this);
         this.login = this.login.bind(this);
@@ -35,11 +38,18 @@ class Login extends Component {
                 username: document.getElementById('username').value,
                 password: this.state.password
             }
+
+            this.setState({ loading: true, })
             const response = await none_headersInstance().post(`/user/login`, body);
 
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('dept', response.data.data.dept);
-            reload();
+
+            setTimeout(() => {
+                this.setState({ loading: false, })
+                reload();   
+            }, 2000);
+            
         } catch (error) {
             if (error.response.status === 400) {
                 console.log(error.response)
@@ -54,14 +64,17 @@ class Login extends Component {
         }
     }
     render() {
-        let error;
+        let error; let loading;
 
         if (this.state.error === true) {
             error = <ErrorBar message={this.state.message} />
         }
+        if (this.state.loading === true) {
+            loading = <Loading />
+        }
         return (
             <>
-                {error}
+                {error}{loading}
                 <div className="login">
                     <input type="text" placeholder="Username" id="username" />
                     <input type="password" placeholder="Password" value={this.state.password} onKeyPress={this.passwordChanged} onChange={this.passwordChanged} />

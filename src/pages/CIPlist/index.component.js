@@ -10,12 +10,12 @@ import { DataGrid } from '@material-ui/data-grid';
 
 import DeptInput from './deptInput.component';
 
-
 class CIPlist extends Component {
     constructor() {
         super();
 
         this.state = {
+            idSelected: [],
             data: [],
             all: [],
             dataSelected: [],
@@ -24,11 +24,11 @@ class CIPlist extends Component {
             name: '',
         };
         this.getData = this.getData.bind(this);
-        this.selectionRow = this.selectionRow.bind(this);
         this.close = this.close.bind(this);
         this.openDeptinput = this.openDeptinput.bind(this);
         this.cipNoChange = this.cipNoChange.bind(this);
         this.nameChange = this.nameChange.bind(this);
+        this.onSelectionModelChange = this.onSelectionModelChange.bind(this)
     }
 
     componentDidMount() {
@@ -37,26 +37,26 @@ class CIPlist extends Component {
 
     close() {
         this.setState({ deptInput: false, })
+        this.getData();
     }
     openDeptinput() {
-        this.setState({ deptInput: true, })
-    }
-    onSelectionModelChange(rows) {
-        console.log(rows);
-    }
-    async selectionRow(row) {
-
-        if (row.isSelected === true) {
-            this.state.dataSelected.push(row.data)
-        } else {
-
-            await this.setState({
-                dataSelected: this.state.dataSelected.filter(item => item.id !== row.data.id)
-            });
+        const idOnSelect = [];
+        for (const item of this.state.dataSelected) {
+            idOnSelect.push(parseInt(item, 10))
         }
+        this.setState({ deptInput: true, idSelected: idOnSelect, })
+        // }, 1000);
+    }
+    async onSelectionModelChange(rows) {
+
+        console.log('onSelectionModelChange: ', rows);
+        // const input = document.getElementById('input');
+        this.setState({
+            dataSelected: rows.selectionModel
+        });
 
         const input = document.getElementById('input');
-        if (this.state.dataSelected.length === 1) {
+        if (rows.selectionModel.length > 0) {
             input.style.display = 'block'
         } else {
             input.style.display = 'none'
@@ -147,7 +147,7 @@ class CIPlist extends Component {
         let deptInput;
 
         if (this.state.deptInput === true) {
-            deptInput = <DeptInput close={this.close} />
+            deptInput = <DeptInput close={this.close} id={this.state.idSelected} />
         }
         const columns = [
             { field: 'cipNo', headerName: 'CIP No.', width: 120 },
@@ -182,8 +182,8 @@ class CIPlist extends Component {
                         columns={columns}
                         pageSize={10}
                         checkboxSelection
-                        onRowSelected={(row) => this.selectionRow(row)}
-                        // onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
+                        // onRowSelected={(row) => this.selectionRow(row)}
+                        onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
                         disableSelectionOnClick={true}
                     />
                 </div>

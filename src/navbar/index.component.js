@@ -13,6 +13,7 @@ import CIPimport from '../pages/CSVupload/import.component';
 import CIPexport from '../pages/CIPexport/index.component';
 import ITC from '../pages/itc/index.component';
 import ACC from '../pages/acc/index.component';
+import Approval from '../pages/approval/index.component';
 
 import { reload } from '../middleware/index';
 
@@ -31,12 +32,16 @@ class Navbar extends Component {
         this.cipExport = this.cipExport.bind(this);
         this.itc = this.itc.bind(this);
         this.acc = this.acc.bind(this);
+        this.approval = this.approval.bind(this);
     }
 
     componentDidMount() {
         this.cipList();
     }
 
+    approval(page) {
+        this.setState({ element: <Approval page={page}/>})
+    }
     cipList() {
         this.setState({ element: <CIPlist /> })
     }
@@ -77,38 +82,38 @@ class Navbar extends Component {
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="a" label="Search">
-                                    <TreeItem nodeId="2" label="CIP List" onClick={this.cipList} />
-                                    <TreeItem nodeId="3" label="CIP History" onClick={this.cipHistory} />
+                                    <TreeItem nodeId="1" label="CIP List" onClick={this.cipList} />
+                                    <TreeItem nodeId="2" label="CIP History" onClick={this.cipHistory} />
                                 </TreeItem>
                             </TreeView>
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="b" label="CSV upload">
-                                    <TreeItem nodeId="2" label="Import confirm CIP" onClick={this.cipImport} />
-                                    <TreeItem nodeId="3" label="Export confirm CIP" onClick={this.cipExport} />
+                                    <TreeItem nodeId="3" label="Import confirm CIP" onClick={this.cipImport} />
+                                    <TreeItem nodeId="4" label="Export confirm CIP" onClick={this.cipExport} />
                                 </TreeItem>
                             </TreeView>
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="c" label="Approval">
-                                    <TreeItem nodeId="2" label="Approval" />
-                                    <TreeItem nodeId="3" label="Cancellation" />
+                                    <TreeItem nodeId="5" label="Approval" onClick={() => this.approval('approval')} />
+                                    <TreeItem nodeId="6" label="Cancellation" onClick={() => this.approval('cancellation')} />
                                 </TreeItem>
                             </TreeView>
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="d" label="ACC">
-                                    <TreeItem nodeId="2" label="Waiting FA after approval" onClick={() => this.acc('waitingFA')} />
-                                    <TreeItem nodeId="3" label={'On waiting GM & MGR'} onClick={() => this.acc('waitingGM')} />
-                                    <TreeItem nodeId="4" label={'Approval budget code diff'} onClick={() => this.acc('approvalBudget')} />
+                                    <TreeItem nodeId="7" label="Waiting FA after approval" onClick={() => this.acc('waitingFA')} />
+                                    <TreeItem nodeId="8" label={'On waiting GM & MGR'} onClick={() => this.acc('waitingGM')} />
+                                    <TreeItem nodeId="9" label={'Approval budget code diff'} onClick={() => this.acc('approvalBudget')} />
                                 </TreeItem>
                             </TreeView>
 
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
-                                <TreeItem nodeId="d" label="ITC">
-                                    <TreeItem nodeId="2" label="Waiting confirm" onClick={() => this.itc('waiting')} />
-                                    <TreeItem nodeId="3" label={'On confirmed'} onClick={() => this.itc('confirmed')} />
+                                <TreeItem nodeId="e" label="ITC">
+                                    <TreeItem nodeId="10" label="Waiting confirm" onClick={() => this.itc('waiting')} />
+                                    <TreeItem nodeId="11" label={'On confirmed'} onClick={() => this.itc('confirmed')} />
                                 </TreeItem>
                             </TreeView>
 
