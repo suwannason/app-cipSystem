@@ -119,7 +119,7 @@ class Navbar extends Component {
 
                         </Container>
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={9} style={{ overflow: 'scroll', marginBottom: 'calc(5%)'}}>
                         <Container maxWidth="xl">
                             {this.state.element}
                         </Container>

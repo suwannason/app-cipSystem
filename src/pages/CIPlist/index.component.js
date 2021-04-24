@@ -2,7 +2,7 @@
 import React, { Component, } from 'react';
 
 import { Grid, TextField, Button } from '@material-ui/core';
-import { app_jsonInstance } from '../../configurations/instance';
+import { app_jsonInstance, blob_response } from '../../configurations/instance';
 
 import { reload } from '../../middleware/index';
 
@@ -28,7 +28,8 @@ class CIPlist extends Component {
         this.openDeptinput = this.openDeptinput.bind(this);
         this.cipNoChange = this.cipNoChange.bind(this);
         this.nameChange = this.nameChange.bind(this);
-        this.onSelectionModelChange = this.onSelectionModelChange.bind(this)
+        this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
+        this.download = this.download.bind(this);
     }
 
     componentDidMount() {
@@ -139,9 +140,33 @@ class CIPlist extends Component {
             }
         }
     }
-    download() {
+    async download() {
+        try {
+            const body = { id: this.state.dataSelected }
+            const response = await blob_response().patch(`/cip/download`, body);
 
-        alert('download')
+            if (window.navigator.msSaveBlob) //IE & Edge
+            { //msSaveBlob only available for IE & Edge
+                console.log("IE & Edge")
+                // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const blob = new File([response.data], "cip.xlsx")
+                window.navigator.msSaveBlob(blob, `cip.xlsx`);
+            }
+            else //Chrome & FF
+            {
+                console.log("Chrome")
+                const url = window.URL.createObjectURL(new File([response.data], "cip.xlsx"));
+                // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `cip.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+            }
+
+        } catch (err) {
+            console.log(err.stack);
+        }
     }
     render() {
         let deptInput;
@@ -176,7 +201,7 @@ class CIPlist extends Component {
 
                     </Grid>
                 </Grid>
-                <div style={{ height: 550, width: '100%', marginTop: 'calc(1%)' }}>
+                <div style={{ height: 600, width: '100%', marginTop: 'calc(1%)' }}>
                     <DataGrid
                         rows={this.state.data}
                         columns={columns}

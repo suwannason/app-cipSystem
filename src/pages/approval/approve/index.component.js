@@ -22,12 +22,12 @@ class Approval extends Component {
     render() {
         return (
             <>
-                <Paper style={{ flexGrow: 1, backgroundColor: '#e1d5ef', color: '#9009a9' }} elevation={0}>
+                <Paper style={{ flexGrow: 1, backgroundColor: '#e1d5ef', color: '#9009a9', }} elevation={0}>
                     <Tabs value={this.state.tab} onChange={this.tabChanged}>
-                        <Tab label="Draft">
+                        <Tab label="Draft" style={{ fontSize: '12px'}}>
                             Draft
                     </Tab>
-                        <Tab label="Approve">
+                        <Tab label="Approve" style={{ fontSize: '12px'}}>
                             Approve
                     </Tab>
                     </Tabs>
