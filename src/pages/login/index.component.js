@@ -51,6 +51,7 @@ class Login extends Component {
             }, 2000);
             
         } catch (error) {
+            this.setState({ loading: false, });
             if (error.response.status === 400) {
                 console.log(error.response)
                 this.setState({

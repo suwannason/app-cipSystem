@@ -21,12 +21,12 @@ class ErrorBar extends React.Component {
     render() {
         return (
             <Snackbar
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right', }}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right', }}
                 open={this.state.open}
                 onClose={this.handleClose}
                 TransitionComponent={(props) => <><Slide {...props} direction="left" /></>}
             >
-                <MuiAlert variant="filled" severity="error" elevation={6} style={{ backgroundColor: 'rgb(220 42 140)', color: 'rgb(2 21 49)' }}>{this.state.message}</MuiAlert>
+                <MuiAlert variant="filled" severity="error" elevation={6} style={{ backgroundColor: '#f50057', color: '#eff2f7' }}>{this.state.message}</MuiAlert>
             </Snackbar>
         )
     }

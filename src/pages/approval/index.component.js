@@ -4,18 +4,28 @@ import Approval from './approve/index.component';
 import Cancellation from './cancel/index.component';
 
 class Approval_index extends Component {
+    constructor() {
+        super();
+
+        this.state = {
+            element: null
+        };
+    }
+    componentDidMount() {
+        const tmp = {};
+        if (this.props.page === 'cancellation') {
+            tmp.element = <Approval page={this.props.page} />
+        } else {
+            tmp.element = <Cancellation />
+        }
+
+        this.setState(tmp);
+    }
     render() {
 
-        let element;
-
-        if (this.props.page === 'approval') {
-            element = <Approval />
-        } else {
-            element = <Cancellation />
-        }
         return (
             <>
-                {element}
+                {this.state.element}
             </>
         );
     }

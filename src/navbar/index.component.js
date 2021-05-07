@@ -13,7 +13,9 @@ import CIPimport from '../pages/CSVupload/import.component';
 import CIPexport from '../pages/CIPexport/index.component';
 import ITC from '../pages/itc/index.component';
 import ACC from '../pages/acc/index.component';
-import Approval from '../pages/approval/index.component';
+import Department from '../pages/approval/approve/department.component';
+import CostCenter from '../pages/approval/approve/costCenter.component';
+import Cancellation from '../pages/approval/cancel/index.component';
 
 import { reload } from '../middleware/index';
 
@@ -32,21 +34,30 @@ class Navbar extends Component {
         this.cipExport = this.cipExport.bind(this);
         this.itc = this.itc.bind(this);
         this.acc = this.acc.bind(this);
-        this.approval = this.approval.bind(this);
+        this.department = this.department.bind(this);
+        this.cancellation = this.cancellation.bind(this);
+        this.costCenter = this.costCenter.bind(this)
     }
 
     componentDidMount() {
         this.cipList();
     }
+    costCenter() {
+        this.setState({ element: <CostCenter /> })
+    }
 
-    approval(page) {
-        this.setState({ element: <Approval page={page}/>})
+    department() {
+        this.setState({ element: <Department /> })
+    }
+    cancellation() {
+        this.setState({ element: <Cancellation /> })
+        
     }
     cipList() {
         this.setState({ element: <CIPlist /> })
     }
     acc(page) {
-        this.setState({ element: <ACC page={page} />})
+        this.setState({ element: <ACC page={page} /> })
     }
     cipHistory() {
         this.setState({ element: <CIPhistpry /> })
@@ -96,8 +107,9 @@ class Navbar extends Component {
 
                             <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                 <TreeItem nodeId="c" label="Approval">
-                                    <TreeItem nodeId="5" label="Approval" onClick={() => this.approval('approval')} />
-                                    <TreeItem nodeId="6" label="Cancellation" onClick={() => this.approval('cancellation')} />
+                                    <TreeItem nodeId="5" label="CC" onClick={() => this.department('department')} />
+                                    <TreeItem nodeId="10" label="Cost center" onClick={() => this.costCenter('costCenter')} />
+                                    <TreeItem nodeId="6" label="Cancellation" onClick={() => this.cancellation('cancellation')} />
                                 </TreeItem>
                             </TreeView>
 
@@ -119,7 +131,7 @@ class Navbar extends Component {
 
                         </Container>
                     </Grid>
-                    <Grid item xs={9} style={{ overflow: 'scroll', marginBottom: 'calc(5%)'}}>
+                    <Grid item xs={9} style={{ overflowY: 'scroll', marginBottom: 'calc(5%)' }}>
                         <Container maxWidth="xl">
                             {this.state.element}
                         </Container>
