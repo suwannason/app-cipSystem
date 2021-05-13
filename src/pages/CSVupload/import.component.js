@@ -65,12 +65,12 @@ class Import extends Component {
 
                 this.setState({ success: true, message: 'Upload success.'})
             } else {
-                this.setState({ message: 'No file selected.', error: true, })
+                this.setState({ message: 'No file selected.', error: true, });
             }
 
             setTimeout(() => {
                 this.setState({ error: false, success: false, })
-                reload();
+                // reload();
             }, 2000);
         } catch (error) {
             console.log(error.stack);
@@ -95,7 +95,7 @@ class Import extends Component {
                     <center>
                         <Button
                             variant="outlined"
-                            style={{ marginRight: 'calc(2%)', backgroundColor: '#7a57ce', color: 'aliceblue' }}
+                            style={{ marginRight: 'calc(2%)', backgroundColor: '#03a9f4', color: 'aliceblue' }}
                             onClick={this.save}>Upload</Button>
 
                     </center>

@@ -1,14 +1,14 @@
 
 import React, { Component } from 'react';
 
-import Setroute from '../components/setRoute.component';
-
 import { Grid, Card, Button } from '@material-ui/core';
 import { DataGrid, } from '@material-ui/data-grid';
 import { app_jsonInstance } from '../../../configurations/instance';
 import { reload } from '../../../middleware/index';
 import ErrorBar from '../../../components/errorBar/index.component';
 import Preview from '../components/moreDetail.component';
+import Loading from '../../../components/loading/index.component';
+import Success from '../../../components/successBar/index.component';
 
 class Approve extends Component {
     constructor() {
@@ -16,6 +16,8 @@ class Approve extends Component {
 
         this.state = {
             setroute: false,
+            loading: false,
+            success: false,
             data: [],
             all: [],
             dataSelected: [],
@@ -46,7 +48,7 @@ class Approve extends Component {
 
             this.setState({ data: response.data.data,
                 all: response.data.data
-            })
+            });
         } catch (error) {
             console.log(error.stack);
 
@@ -65,14 +67,26 @@ class Approve extends Component {
             return;
         }
     }
-    check() {
+    async check() {
+        this.setState({ loading: true, message: 'Approving CIP.' });
         if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to check.'})
+            this.setState({ error: true, message: 'Please select CIP to check.', loading: false })
             setTimeout(() => {
                 this.setState({ error: false, })
             }, 3000);
             return;
         }
+        const body = {
+            id: this.state.dataSelected,
+        };
+
+        const response = await app_jsonInstance().put(`/approval/approve/cc`, body);
+        this.setState({ message: response.data.message, success: true, loading: false, });
+        setTimeout(() => {
+            this.setState({ success: false,});
+            this.getData();
+        }, 2000);
+
     }
     onSelectionModelChange(rows) {
         this.setState({
@@ -87,7 +101,6 @@ class Approve extends Component {
         this.setState({ preview: true, rowclick: data.id })
     }
     render() {
-        let setRoute;
         const columns = [
             // { field: 'preview', headerName: 'show', width: 80 },
             { field: 'cipNo', headerName: 'CIP No.', width: 120 },
@@ -98,9 +111,6 @@ class Approve extends Component {
             { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
             // { field: 'cc', headerName: 'CC', width: 80 },
         ];
-        if (this.state.setroute === true) {
-            setRoute = <Setroute />
-        }
         let error;
         if (this.state.error === true) {
             error = <ErrorBar message={this.state.message} />
@@ -109,9 +119,16 @@ class Approve extends Component {
         if (this.state.preview === true) {
             preview = <Preview close={this.close} id={this.state.rowclick} />
         }
+        let loading; let success;
+        if (this.state.loading === true) {
+            loading = <Loading message={this.state.message} />
+        }
+        if (this.state.success === true) {
+            success = <Success message={this.state.message} />
+        }
         return (
             <>
-                {setRoute}{error}{preview}
+                {error}{preview}{loading}{success}
 
                 <Grid container spacing={0}>
                     <Grid item xs={9}>
@@ -123,7 +140,7 @@ class Approve extends Component {
                                 Submit
                             </Button>
                             <Button variant="outlined" style={{ backgroundColor: '#e48989' }} onClick={this.reject}>
-                                Cancel
+                                reject
                             </Button>
                         </Card>
                     </Grid>

@@ -1,7 +1,7 @@
 
 import React, { Component, } from 'react';
 
-import { Grid, TextField, Button } from '@material-ui/core';
+import { Grid, TextField, Button, Card } from '@material-ui/core';
 import { app_jsonInstance, blob_response } from '../../configurations/instance';
 
 import { reload } from '../../middleware/index';
@@ -188,6 +188,18 @@ class CIPlist extends Component {
                 {deptInput}
                 {this.state.hiddenInput}
                 <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                        <Card elevation={1} variant="outlined" style={{ padding: '5px', textAlign: 'center' }}>
+                            CIP List
+                        </Card>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={0} style={{ marginTop: 'calc(1%)', textAlign: 'center' }}>
+                    <Grid item xs={12} style={{ textAlign: 'right'}}>
+                        <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', }} onClick={this.download}> Download </Button>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={1}>
                     <Grid item xs={3}>
                         <TextField label="CIP No." onChange={this.cipNoChange} value={this.state.cipNo} />
                     </Grid>
@@ -212,12 +224,6 @@ class CIPlist extends Component {
                         disableSelectionOnClick={true}
                     />
                 </div>
-
-                <Grid container spacing={0} style={{ marginTop: 'calc(1%)', textAlign: 'center' }}>
-                    <Grid item xs={12}>
-                        <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 93 177)', color: 'aliceblue', }} onClick={this.download}> Download </Button>
-                    </Grid>
-                </Grid>
 
             </>
         );

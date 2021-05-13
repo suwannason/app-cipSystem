@@ -40,7 +40,7 @@ class Login extends Component {
             }
 
             this.setState({ loading: true, })
-            const response = await none_headersInstance().post(`/user/login`, body);
+            const response = await none_headersInstance().post(`/user/login/test`, body);
 
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('dept', response.data.data.dept);
@@ -53,9 +53,13 @@ class Login extends Component {
         } catch (error) {
             this.setState({ loading: false, });
             if (error.response.status === 400) {
-                console.log(error.response)
                 this.setState({
-                    message: error.response.data.message || error.response.data.title,
+                    message: error.response.data.message,
+                    error: true,
+                });
+            } else if (error.response.status === 401) {
+                this.setState({
+                    message: error.response.data.message,
                     error: true,
                 });
             }
