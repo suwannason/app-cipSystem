@@ -10,7 +10,7 @@ import { form_dataInstance } from '../../configurations/instance';
 import ErrorBar from '../../components/errorBar/index.component';
 import SuccessBar from '../../components/successBar/index.component';
 
-import { reload } from '../../middleware/index';
+// import { reload } from '../../middleware/index';
 
 
 class Import extends Component {

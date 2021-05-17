@@ -80,9 +80,9 @@ class Navbar extends Component {
     }
     notificationClick(event) {
         if (this.state.navIndex === 1) {
-            this.setState({ navIndex: -1 })
+            this.setState({ navIndex: 0 })
         }
-        if (this.state.navIndex === -1) {
+        if (this.state.navIndex === 0) {
             this.setState({ navIndex: 1 })
         }
         this.setState({
@@ -103,7 +103,7 @@ class Navbar extends Component {
                     <Toolbar style={{ background: 'linear-gradient(90deg, rgba(98,172,231,1) 19%, rgba(135,229,242,1) 44%, rgba(147,224,219,1) 81%)', }}>
                         <IconButton> <Menu style={{ color: '#3f51b5' }} /> </IconButton>
                         <Typography variant="h6" style={{ flexGrow: 1 }}>CIP system</Typography>
-                        <Badge badgeContent={4} color="secondary" style={{ marginRight: 'calc(75%)' }}>
+                        <Badge badgeContent={4} max={99} color="secondary" style={{ marginRight: 'calc(75%)' }}>
                             <Notifications style={{ color: '#081648', cursor: 'pointer' }} onClick={this.notificationClick} />
                         </Badge>
                         <Button style={{ backgroundColor: '#e91e63', color: 'aliceblue', }} onClick={this.logout}> logout </Button>
@@ -113,16 +113,41 @@ class Navbar extends Component {
                 <Popper open={this.state.noti} anchorEl={this.state.anchorEl} placement="bottom" transition>
                     {({ TransitionProps }) => (
                         <Fade {...TransitionProps} timeout={350}>
-                            <Paper style={{ padding: '10px', zIndex: 3 }}>
-                                The content of the Popper.
+                            <Paper style={{ width: '250px', }}>
+                                <Grid container spacing={0} style={{
+                                    borderLeft: '8px solid rgb(56 107 239)',
+                                    backgroundColor: 'rgb(255 255 255)',
+                                    borderRadius: '5px'
+                                }}
+                                >
+                                    <Grid item xs={12} style={{
+                                        fontWeight: 700,
+                                        fontSize: '14px',
+                                        marginTop: '5px',
+                                        marginBottom: '5px'
+                                    }}>
+                                        Approving request
+                                    </Grid>
+
+                                    <Grid item xs={12} style={{
+                                        maxWidth: 'calc(100% - 15px)',
+                                        fontSize: '14px',
+                                        lineHeight: '150%',
+                                        wordWrap: 'break-word',
+                                        marginBottom: 0,
+                                        marginTop: 0
+                                    }}>
+                                        4 CIP checked on 2021/16/25 16:43
+                                    </Grid>
+                                </Grid>
                             </Paper>
                         </Fade>
                     )}
                 </Popper>
                 {/* #d9eef1 */}
-                <Grid container spacing={0} style={{ flexGrow: 1 }}>
+                <Grid container spacing={0} style={{ flexGrow: 1, }}>
                     <Grid item xs={3} style={{ marginTop: 'calc(5.5%)', }}>
-                        <Paper style={{ position: 'absolute', width: '25%', height: '100%', backgroundColor: '#d9eef1' }} elevation={0}>
+                        <Paper style={{ position: 'absolute', width: '25%', height: '100%', backgroundColor: '#d9eef1', }} elevation={0}>
                             <Container maxWidth="xl" style={{ height: 100, flexGrow: 1 }}>
 
                                 <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>

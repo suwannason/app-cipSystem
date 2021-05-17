@@ -18,6 +18,7 @@ class Approve extends Component {
             setroute: false,
             loading: false,
             success: false,
+            headerMessage: '....',
             data: [],
             all: [],
             dataSelected: [],
@@ -47,7 +48,8 @@ class Approve extends Component {
             const response = await app_jsonInstance().get(`/approval/cc`);
 
             this.setState({ data: response.data.data,
-                all: response.data.data
+                all: response.data.data,
+                headerMessage: response.data.message
             });
         } catch (error) {
             console.log(error.stack);
@@ -132,14 +134,14 @@ class Approve extends Component {
 
                 <Grid container spacing={0}>
                     <Grid item xs={9}>
-
+                        {this.state.headerMessage}
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
                             <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: 'rgb(128 214 145)' }} onClick={this.check}>
-                                Submit
+                                Approve
                             </Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#e48989' }} onClick={this.reject}>
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336' }} onClick={this.reject}>
                                 reject
                             </Button>
                         </Card>

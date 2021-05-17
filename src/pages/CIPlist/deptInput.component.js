@@ -33,6 +33,8 @@ class DeptInput extends Component {
             depts: null,
             success: false,
             boiText: '-',
+            cipUpdate: null,
+            focused: false,
         };
 
         this.handleClose = this.handleClose.bind(this);
@@ -46,11 +48,12 @@ class DeptInput extends Component {
         this.BFMvalueChanged = this.BFMvalueChanged.bind(this);
         this.boiSelected = this.boiSelected.bind(this);
         this.saveDraft = this.saveDraft.bind(this);
+        this.cipUpdateCheck = this.cipUpdateCheck.bind(this);
     }
-    componentDidMount() {
-        console.log(this.props.id);
+    async componentDidMount() {
         this.setState({ open: true })
-        this.getDepartments();
+        await this.cipUpdateCheck();
+
     }
 
     async ccUservalueChanged(event) {
@@ -83,7 +86,7 @@ class DeptInput extends Component {
         try {
 
             const response = await none_headersInstance().get(`/user/dept`);
-
+            console.log(this.state.ccUservalue)
             this.setState({
                 ccUser: <>
                     <Select
@@ -122,6 +125,45 @@ class DeptInput extends Component {
     }
     actDateActive() {
         this.setState({ datePicker: true, writeText: 'act' });
+    }
+    async cipUpdateCheck() {
+        try {
+
+            const response = await none_headersInstance().get(`/cip/cipUpdate/${this.props.id[0]}`);
+
+            if (response.data.data !== null) {
+                this.setState({
+                    focused: true,
+                    ccUservalue: response.data.data.costCenterOfUser,
+                    boiText: response.data.data.boiType,
+                    BFMvalue: response.data.data.newBFMorAddBFM,
+                });
+
+                setTimeout(() => {
+                    this.setState({
+                        cipUpdate: response.data.data,
+                        planDate: response.data.data.planDate,
+                        actDate: response.data.data.actDate,
+                    });
+                    document.getElementById('results').value = response.data.data.result
+                    document.getElementById('reasonDiff').value = response.data.data.reasonDiff
+                    document.getElementById('fixAssetCode').value = response.data.data.fixedAssetCode
+                    document.getElementById('classFixAsset').value = response.data.data.classFixedAsset
+                    document.getElementById('fixAssetName').value = response.data.data.fixAssetName
+                    document.getElementById('serialNo').value = response.data.data.serialNo
+                    document.getElementById('processDie').value = response.data.data.processDie
+                    document.getElementById('model').value = response.data.data.model
+                    document.getElementById('tranferToSupplier').value = response.data.data.tranferToSupplier
+                    document.getElementById('fixAssetNum').value = response.data.data.upFixAsset
+                    document.getElementById('reasonForDelay').value = response.data.data.reasonForDelay
+                    document.getElementById('remark').value = response.data.data.remark
+                }, 1000);
+
+            }
+            this.getDepartments();
+        } catch (err) {
+            console.log(err.stack);
+        }
     }
 
     async saveDraft() {
@@ -209,7 +251,7 @@ class DeptInput extends Component {
 
             <Dialog open={this.state.open} fullWidth>
                 {datePicker}{success}
-                <DialogTitle style={{ backgroundColor: '#37075a', color: 'aliceblue' }}>
+                <DialogTitle style={{ backgroundColor: 'rgb(11 14 74)', color: 'aliceblue' }}>
                     Input
                 </DialogTitle>
                 <DialogContent>
@@ -221,34 +263,34 @@ class DeptInput extends Component {
                             <TextField label="Operating Date (Act)" id="oda" fullWidth focused onClick={this.actDateActive} value={this.state.actDate} required />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField label="Result" fullWidth id="results" />
+                            <TextField label="Result" fullWidth id="results" focused={this.state.focused} />
                         </Grid>
 
                         <Grid item xs={6}>
-                            <TextField label={'Result Reason diff'} fullWidth id="reasonDiff" />
+                            <TextField label={'Result Reason diff'} fullWidth id="reasonDiff" focused={this.state.focused} />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField label="Fixed Asset Code" fullWidth id="fixAssetCode" />
+                            <TextField label="Fixed Asset Code" fullWidth id="fixAssetCode" focused={this.state.focused} />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField label="CLASS FIXED ASSET" fullWidth id="classFixAsset" />
-                        </Grid>
-
-                        <Grid item xs={6}>
-                            <TextField label="Fix Asset Name" fullWidth id="fixAssetName" />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField label="Serial No" fullWidth id="serialNo" />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField label="Process Die" fullWidth id="processDie" />
+                            <TextField label="CLASS FIXED ASSET" fullWidth id="classFixAsset" focused={this.state.focused} />
                         </Grid>
 
                         <Grid item xs={6}>
-                            <TextField label="Model" fullWidth id="model" />
+                            <TextField label="Fix Asset Name" fullWidth id="fixAssetName" focused={this.state.focused} />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField label="Transfer to supplier" id="tranferToSupplier" fullWidth />
+                            <TextField label="Serial No" fullWidth id="serialNo" focused={this.state.focused} />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField label="Process Die" fullWidth id="processDie" focused={this.state.focused} />
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField label="Model" fullWidth id="model" focused={this.state.focused} />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField label="Transfer to supplier" id="tranferToSupplier" focused={this.state.focused} fullWidth />
                         </Grid>
                         <Grid item xs={6}>
                             {/* <TextField label="Cost Center of User" id="cc" fullWidth /> */}
@@ -259,7 +301,7 @@ class DeptInput extends Component {
                         </Grid>
 
                         <Grid item xs={6}>
-                            <TextField label="Fix Asset กี่ตัว" id="fixAssetNum" fullWidth />
+                            <TextField label="Fix Asset กี่ตัว" id="fixAssetNum" fullWidth focused={this.state.focused} />
                         </Grid>
 
                         <Grid item xs={6}>
@@ -279,10 +321,10 @@ class DeptInput extends Component {
                         </Grid>
 
                         <Grid item xs={6}>
-                            <TextField label="Reason for Delay OPD date" fullWidth id="reasonForDelay" />
+                            <TextField label="Reason for Delay OPD date" fullWidth id="reasonForDelay" value={this.state.cipUpdate?.reasonForDelay} focused={this.state.focused} />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField label="REMARK(Add CIP/BFM No.)" fullWidth id="remark" />
+                            <TextField label="REMARK(Add CIP/BFM No.)" fullWidth id="remark" value={this.state.cipUpdate?.remark} focused={this.state.focused} />
                         </Grid>
 
                         <Grid item xs={6}>
@@ -296,6 +338,7 @@ class DeptInput extends Component {
                                 >
                                     <MenuItem value={'BOI'}>BOI</MenuItem>
                                     <MenuItem value={'NON BOI'}>NON BOI</MenuItem>
+                                    <MenuItem value={'Die'}>Die</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -306,11 +349,11 @@ class DeptInput extends Component {
 
                     <Grid container spacing={0}>
                         <Grid item xs={8}>
-                            <Button variant="outlined" style={{ backgroundColor: 'rgb(191 112 31)', color: 'aliceblue' }} onClick={this.saveDraft}>save draft</Button>
+                            <Button variant="outlined" style={{ backgroundColor: '#795548', color: 'aliceblue' }} onClick={this.saveDraft}>save draft</Button>
                         </Grid>
                         <Grid item xs={4} spacing={2} style={{ textAlign: 'end' }}>
-                            <Button variant="outlined" style={{ backgroundColor: '#46b73f', color: 'aliceblue', marginRight: 'calc(3%)' }} onClick={this.ok}>ok</Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#d85757', color: 'aliceblue' }} onClick={this.handleClose}>close</Button>
+                            <Button variant="outlined" style={{ backgroundColor: '#8bc34a', color: 'aliceblue', marginRight: 'calc(3%)' }} onClick={this.ok}>submit</Button>
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.handleClose}>close</Button>
                         </Grid>
                     </Grid>
 

@@ -147,7 +147,7 @@ class Approve extends Component {
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
                             <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: 'rgb(128 214 145)' }} onClick={this.check}>
-                                Submit
+                                Approve
                             </Button>
                             <Button variant="outlined" style={{ backgroundColor: '#e48989' }} onClick={this.reject}>
                                 reject

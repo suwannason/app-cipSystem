@@ -85,7 +85,7 @@ class ApprovalBudget extends Component {
         setTimeout(() => {
             this.setState({ success: false,});
             this.getData();
-        }, 2000);
+        }, 3500);
 
     }
     onSelectionModelChange(rows) {
@@ -137,9 +137,9 @@ class ApprovalBudget extends Component {
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
                             <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: '#4caf50' }} onClick={this.check}>
-                                Submit
+                                Approve
                             </Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#e48989' }} onClick={this.reject}>
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336' }} onClick={this.reject}>
                                 reject
                             </Button>
                         </Card>

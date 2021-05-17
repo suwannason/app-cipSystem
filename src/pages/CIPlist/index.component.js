@@ -5,6 +5,7 @@ import { Grid, TextField, Button, Card } from '@material-ui/core';
 import { app_jsonInstance, blob_response } from '../../configurations/instance';
 
 import { reload } from '../../middleware/index';
+import Error from '../../components/errorBar/index.component';
 
 import { DataGrid } from '@material-ui/data-grid';
 
@@ -22,6 +23,8 @@ class CIPlist extends Component {
             deptInput: false,
             cipNo: '',
             name: '',
+            error: false,
+            message: 'Error',
         };
         this.getData = this.getData.bind(this);
         this.close = this.close.bind(this);
@@ -45,7 +48,15 @@ class CIPlist extends Component {
         for (const item of this.state.dataSelected) {
             idOnSelect.push(parseInt(item, 10))
         }
-        this.setState({ deptInput: true, idSelected: idOnSelect, })
+        if (idOnSelect.length === 1) {
+            this.setState({ deptInput: true, idSelected: idOnSelect, })
+        } else {
+            this.setState({ error: true, message: 'Please select 1 row to input. '})
+        }
+
+        setTimeout(() => {
+            this.setState({ error: false, })
+        }, 3000);
         // }, 1000);
     }
     async onSelectionModelChange(rows) {
@@ -55,13 +66,6 @@ class CIPlist extends Component {
         this.setState({
             dataSelected: rows.selectionModel
         });
-
-        const input = document.getElementById('input');
-        if (rows.selectionModel.length > 0) {
-            input.style.display = 'block'
-        } else {
-            input.style.display = 'none'
-        }
 
     }
     cipNoChange(event) {
@@ -174,6 +178,10 @@ class CIPlist extends Component {
         if (this.state.deptInput === true) {
             deptInput = <DeptInput close={this.close} id={this.state.idSelected} />
         }
+        let error;
+        if (this.state.error === true) {
+            error = <Error message={this.state.message} />
+        }
         const columns = [
             { field: 'cipNo', headerName: 'CIP No.', width: 120 },
             { field: 'subCipNo', headerName: 'Sub CIP No.', width: 130 },
@@ -185,7 +193,7 @@ class CIPlist extends Component {
         ];
         return (
             <>
-                {deptInput}
+                {deptInput}{error}
                 {this.state.hiddenInput}
                 <Grid container spacing={1}>
                     <Grid item xs={12}>
@@ -209,7 +217,7 @@ class CIPlist extends Component {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <Button variant="outlined" id="input" style={{ backgroundColor: '#82b1da', color: 'aliceblue', display: 'none' }} onClick={this.openDeptinput}> Input </Button>
+                        <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 81 181)', color: 'aliceblue', }} onClick={this.openDeptinput}> Input </Button>
 
                     </Grid>
                 </Grid>
