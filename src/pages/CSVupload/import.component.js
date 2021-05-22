@@ -10,7 +10,7 @@ import { form_dataInstance } from '../../configurations/instance';
 import ErrorBar from '../../components/errorBar/index.component';
 import SuccessBar from '../../components/successBar/index.component';
 
-// import { reload } from '../../middleware/index';
+import { reload } from '../../middleware/index';
 
 
 class Import extends Component {
@@ -35,6 +35,7 @@ class Import extends Component {
                 onChange={this.handleChange.bind(this)}
                 filesLimit={1}
                 showFileNames={true}
+                showAlerts={false}
                 dropzoneText="Accouting upload"
 
             />
@@ -43,6 +44,7 @@ class Import extends Component {
                 onChange={this.handleChange.bind(this)}
                 filesLimit={1}
                 showFileNames={true}
+                showAlerts={false}
                 dropzoneText="User Upload"
 
             />
@@ -70,7 +72,7 @@ class Import extends Component {
 
             setTimeout(() => {
                 this.setState({ error: false, success: false, })
-                // reload();
+                reload();
             }, 2000);
         } catch (error) {
             console.log(error.stack);

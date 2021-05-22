@@ -126,6 +126,34 @@ class Navbar extends Component {
                                         marginTop: '5px',
                                         marginBottom: '5px'
                                     }}>
+                                        Checking request
+                                    </Grid>
+
+                                    <Grid item xs={12} style={{
+                                        maxWidth: 'calc(100% - 15px)',
+                                        fontSize: '14px',
+                                        lineHeight: '150%',
+                                        wordWrap: 'break-word',
+                                        marginBottom: 0,
+                                        marginTop: 0
+                                    }}>
+                                        4 CIP checked on 2021/16/25 16:43
+                                    </Grid>
+                                </Grid>
+
+
+                                <Grid container spacing={0} style={{
+                                    borderLeft: '8px solid rgb(56 107 239)',
+                                    backgroundColor: 'rgb(255 255 255)',
+                                    borderRadius: '5px'
+                                }}
+                                >
+                                    <Grid item xs={12} style={{
+                                        fontWeight: 700,
+                                        fontSize: '14px',
+                                        marginTop: '5px',
+                                        marginBottom: '5px'
+                                    }}>
                                         Approving request
                                     </Grid>
 
@@ -166,8 +194,8 @@ class Navbar extends Component {
 
                                 <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                     <TreeItem nodeId="c" label="Approval">
-                                        <TreeItem nodeId="5" label="CC" onClick={() => this.department('department')} />
-                                        <TreeItem nodeId="10" label="Cost center" onClick={() => this.costCenter('costCenter')} />
+                                        <TreeItem nodeId="5" label="CC - Requester" onClick={() => this.department('department')} />
+                                        <TreeItem nodeId="10" label="CC - User" onClick={() => this.costCenter('costCenter')} />
                                         <TreeItem nodeId="6" label="Cancellation" onClick={() => this.cancellation('cancellation')} />
                                     </TreeItem>
                                 </TreeView>

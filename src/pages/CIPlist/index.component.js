@@ -217,7 +217,7 @@ class CIPlist extends Component {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 81 181)', color: 'aliceblue', }} onClick={this.openDeptinput}> Input </Button>
+                        {/* <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 81 181)', color: 'aliceblue', }} onClick={this.openDeptinput}> Input </Button> */}
 
                     </Grid>
                 </Grid>

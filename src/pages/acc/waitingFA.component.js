@@ -138,10 +138,10 @@ class WaitingFA extends Component {
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
-                            <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: '#4caf50' }} onClick={this.check}>
-                                Approve
+                            <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: '#4caf50', color: 'aliceblue' }} onClick={this.check}>
+                                Finish cip
                             </Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#f44336' }} onClick={this.reject}>
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.reject}>
                                 reject
                             </Button>
                         </Card>

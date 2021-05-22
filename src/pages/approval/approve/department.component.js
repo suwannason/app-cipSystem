@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { Grid, Card, Button } from '@material-ui/core';
 import { DataGrid, } from '@material-ui/data-grid';
-import { app_jsonInstance } from '../../../configurations/instance';
+import { app_jsonInstance, none_headersInstance } from '../../../configurations/instance';
 import { reload } from '../../../middleware/index';
 import ErrorBar from '../../../components/errorBar/index.component';
 import Preview from '../components/moreDetail.component';
@@ -60,14 +60,29 @@ class Approve extends Component {
             }
         }
     }
-    reject() {
+    async reject() {
         if (this.state.dataSelected.length === 0) {
             this.setState({ error: true, message: 'Please select CIP to reject.'})
             setTimeout(() => {
-                this.setState({ error: false, })
+                this.setState({ error: false, });
+                this.getData();
             }, 3000);
             return;
         }
+
+        const response = [];
+        this.state.dataSelected.forEach((item) => {
+            response.push(none_headersInstance().delete(`/cip/reject/${item}`));
+        });
+
+        await Promise.all(response);
+
+        this.setState({ success: true, message: 'Reject CIP success.' });
+
+        setTimeout(() => {
+            this.setState({ success: false, });
+        }, 3000);
+
     }
     async check() {
         this.setState({ loading: true, message: 'Approving CIP.' });

@@ -28,6 +28,7 @@ class MoreDetail extends Component {
             transition: null,
             approval: {
                 prepare1: null,
+                prepare2: null,
                 check1: null,
                 check2: null,
                 approve1: null,
@@ -63,7 +64,8 @@ class MoreDetail extends Component {
     }
     setSignature() {
 
-        const preapre = this.state.db.data.approval.find(item => item.onApproveStep === "save");
+        const preapre1 = this.state.db.data.approval.find(item => item.onApproveStep === "save");
+        const preapre2 = this.state.db.data.approval.find(item => item.onApproveStep === "cost-prepared");
         const check1 = this.state.db.data.approval.find(item => item.onApproveStep === "cc-checked");
         const check2 = this.state.db.data.approval.find(item => item.onApproveStep === "cost-checked");
         const approve1 = this.state.db.data.approval.find(item => item.onApproveStep === "cc-approved");
@@ -71,7 +73,8 @@ class MoreDetail extends Component {
 
         this.setState({
             approval: {
-                prepare1: preapre,
+                prepare1: preapre1,
+                prepare2: preapre2,
                 check1: check1,
                 check2: check2,
                 approve1: approve1,
@@ -198,9 +201,9 @@ class MoreDetail extends Component {
                             <Signature
                                 approval={
                                     {
-                                        prepare: { empNo: this.state.approval.prepare1.empNo, date: this.state.approval.prepare1.date },
-                                        check: { empNo: this.state.approval.check1.empNo, date: this.state.approval.check1.date },
-                                        approve: { empNo: this.state.approval.approve1.empNo, date: this.state.approval.approve1.date },
+                                        prepare: { empNo: this.state.approval.prepare1?.empNo, date: this.state.approval.prepare1?.date },
+                                        check: { empNo: this.state.approval.check1?.empNo, date: this.state.approval.check1?.date },
+                                        approve: { empNo: this.state.approval.approve1?.empNo, date: this.state.approval.approve1?.date },
                                     }}
                             /> : ''}
                     </Card>
@@ -312,9 +315,9 @@ class MoreDetail extends Component {
                             <Signature
                                 approval={
                                     {
-                                        prepare: { empNo: '-', date: '-' },
-                                        check: { empNo: this.state.approval.check2.empNo, date: this.state.approval.check2.date },
-                                        approve: { empNo: this.state.approval.approve2.empNo, date: this.state.approval.approve2.date },
+                                        prepare: { empNo: this.state.approval.prepare2?.empNo, date: this.state.approval.prepare2?.date },
+                                        check: { empNo: this.state.approval.check2?.empNo, date: this.state.approval.check2?.date },
+                                        approve: { empNo: this.state.approval.approve2?.empNo, date: this.state.approval.approve2?.date },
                                     }}
                             /> : ''}
                     </Card>

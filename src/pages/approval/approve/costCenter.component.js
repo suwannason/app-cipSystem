@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { Grid, Card, Button } from '@material-ui/core';
 import { DataGrid, } from '@material-ui/data-grid';
-import { app_jsonInstance } from '../../../configurations/instance';
+import { app_jsonInstance, blob_response, form_dataInstance } from '../../../configurations/instance';
 import { reload } from '../../../middleware/index';
 import ErrorBar from '../../../components/errorBar/index.component';
 import Preview from '../components/moreDetail.component';
@@ -25,6 +25,7 @@ class Approve extends Component {
             preview: false,
             message: 'Have some error.',
             rowclick: null,
+            headerMessage: '...',
         };
         this.openSetroute = this.openSetroute.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
@@ -32,6 +33,7 @@ class Approve extends Component {
         this.reject = this.reject.bind(this);
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
+        this.uploadApprove = this.uploadApprove.bind(this);
     }
 
     componentDidMount() {
@@ -46,8 +48,10 @@ class Approve extends Component {
         try {
             const response = await app_jsonInstance().get(`/approval/costCenter`);
 
-            this.setState({ data: response.data.data,
-                all: response.data.data
+            this.setState({
+                data: response.data.data,
+                all: response.data.data,
+                headerMessage: response.data.message
             });
         } catch (error) {
             console.log(error.stack);
@@ -60,7 +64,7 @@ class Approve extends Component {
     }
     reject() {
         if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to reject.'})
+            this.setState({ error: true, message: 'Please select CIP to reject.' })
             setTimeout(() => {
                 this.setState({ error: false, })
             }, 3000);
@@ -70,7 +74,7 @@ class Approve extends Component {
     async check() {
         this.setState({ loading: true, message: 'Approving CIP.' });
         if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to check.'})
+            this.setState({ error: true, message: 'Please select CIP to check.' })
             setTimeout(() => {
                 this.setState({ error: false, })
             }, 3000);
@@ -83,7 +87,7 @@ class Approve extends Component {
         const response = await app_jsonInstance().put(`/approval/approve/costCenter`, body);
         this.setState({ message: response.data.message, success: true, loading: false, });
         setTimeout(() => {
-            this.setState({ success: false,});
+            this.setState({ success: false, });
             this.getData();
         }, 2000);
 
@@ -93,6 +97,56 @@ class Approve extends Component {
             dataSelected: rows.selectionModel,
         });
 
+    }
+    async download() {
+        try {
+            const response = await blob_response().get(`/approval/download`);
+
+            if (window.navigator.msSaveBlob) //IE & Edge
+            { //msSaveBlob only available for IE & Edge
+                console.log("IE & Edge")
+                // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const blob = new File([response.data], "cost-center.xlsx")
+                window.navigator.msSaveBlob(blob, `cost-center.xlsx`);
+            }
+            else //Chrome & FF
+            {
+                console.log("Chrome")
+                const url = window.URL.createObjectURL(new File([response.data], "cost-center.xlsx"));
+                // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `cost-center.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+            }
+
+        } catch (err) {
+
+        }
+    }
+    uploadClick() {
+        document.getElementById('prepare-upload').click();
+    }
+    async uploadApprove(event) {
+        try {
+            if (event.target.files.length !== 0) {
+                let formdata = new FormData();
+                formdata.append('file', event.target.files[0]);
+                await form_dataInstance().post(`/approval/costCenter/prepare`, formdata);
+
+                this.setState({ success: true, message: 'Upload success.' })
+            } else {
+                this.setState({ message: 'No file selected.', error: true, });
+            }
+
+            setTimeout(() => {
+                this.setState({ error: false, success: false, })
+                // reload();
+            }, 2000);
+        } catch (err) {
+
+        }
     }
     close() {
         this.setState({ preview: false, })
@@ -131,15 +185,22 @@ class Approve extends Component {
                 {error}{preview}{loading}{success}
 
                 <Grid container spacing={0}>
+                    <Grid item xs={12} style={{ marginBottom: 'calc(2%)' }}>
+                        {this.state.headerMessage}
+                    </Grid>
+                    <input type="file" id="prepare-upload" hidden onChange={this.uploadApprove} />
                     <Grid item xs={9}>
-
+                        <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(2%)' }} onClick={this.download}> Download </Button>
+                        {(this.state.headerMessage.indexOf('prepare') !== -1)
+                            ?
+                            <Button variant="outlined" id="input" style={{ backgroundColor: '#8bc34a', color: 'aliceblue', }} onClick={this.uploadClick}> upload & approve </Button> : ''}
                     </Grid>
                     <Grid item xs={3}>
-                        <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
-                            <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: 'rgb(128 214 145)' }} onClick={this.check}>
+                        <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)', color: 'aliceblue' }} variant="outlined" >
+                            <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: 'rgb(128 214 145)', color: 'aliceblue' }} onClick={this.check}>
                                 Approve
                             </Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#f44336' }} onClick={this.reject}>
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.reject}>
                                 reject
                             </Button>
                         </Card>
