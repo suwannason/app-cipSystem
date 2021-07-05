@@ -12,6 +12,7 @@ class waitingGM extends Component {
         this.state = {
             data: [],
             preview: false,
+            loading: false,
         };
 
         this.getData = this.getData.bind(this);
@@ -26,12 +27,12 @@ class waitingGM extends Component {
     async getData() {
 
         try {
+            this.setState({ loading: true, })
             const response = await none_headersInstance().get(`/acc/tracking`);
 
-            console.log(response)
-
             this.setState({
-                data: response.data.data
+                data: response.data.data,
+                loading: false,
             })
 
         } catch (err) {
@@ -75,6 +76,7 @@ class waitingGM extends Component {
                         columns={columns}
                         pageSize={20}
                         // checkboxSelection
+                        loading={this.state.loading}
                         onRowClick={(row) => this.preview(row)}
                         // onRowSelected={(row) => this.selectionRow(row)}
                         onSelectionModelChange={(row) => this.onSelectionModelChange(row)}

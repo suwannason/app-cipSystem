@@ -122,11 +122,12 @@ class Navbar extends Component {
                                 >
                                     <Grid item xs={12} style={{
                                         fontWeight: 700,
+                                        cursor: 'pointer',
                                         fontSize: '14px',
                                         marginTop: '5px',
                                         marginBottom: '5px'
-                                    }}>
-                                        Checking request
+                                    }} onClick={this.department}>
+                                        CC requester
                                     </Grid>
 
                                     <Grid item xs={12} style={{
@@ -134,9 +135,10 @@ class Navbar extends Component {
                                         fontSize: '14px',
                                         lineHeight: '150%',
                                         wordWrap: 'break-word',
+                                        cursor: 'pointer',
                                         marginBottom: 0,
                                         marginTop: 0
-                                    }}>
+                                    }} onClick={this.department}>
                                         4 CIP checked on 2021/16/25 16:43
                                     </Grid>
                                 </Grid>
@@ -146,25 +148,27 @@ class Navbar extends Component {
                                     borderLeft: '8px solid rgb(56 107 239)',
                                     backgroundColor: 'rgb(255 255 255)',
                                     borderRadius: '5px'
-                                }}
+                                }} onClick={this.costCenter}
                                 >
                                     <Grid item xs={12} style={{
                                         fontWeight: 700,
+                                        cursor: 'pointer',
                                         fontSize: '14px',
                                         marginTop: '5px',
                                         marginBottom: '5px'
                                     }}>
-                                        Approving request
+                                        CC user
                                     </Grid>
 
                                     <Grid item xs={12} style={{
                                         maxWidth: 'calc(100% - 15px)',
                                         fontSize: '14px',
+                                        cursor: 'pointer',
                                         lineHeight: '150%',
                                         wordWrap: 'break-word',
                                         marginBottom: 0,
                                         marginTop: 0
-                                    }}>
+                                    }} onClick={this.costCenter}>
                                         4 CIP checked on 2021/16/25 16:43
                                     </Grid>
                                 </Grid>
@@ -185,37 +189,43 @@ class Navbar extends Component {
                                     </TreeItem>
                                 </TreeView>
 
-                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['b']}>
                                     <TreeItem nodeId="b" label="CSV upload">
                                         <TreeItem nodeId="3" label="Import confirm CIP" onClick={this.cipImport} />
-                                        <TreeItem nodeId="4" label="Export confirm CIP" onClick={this.cipExport} />
+                                        {/* <TreeItem nodeId="4" label="Export confirm CIP" onClick={this.cipExport} /> */}
                                     </TreeItem>
                                 </TreeView>
 
-                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['c']}>
                                     <TreeItem nodeId="c" label="Approval">
                                         <TreeItem nodeId="5" label="CC - Requester" onClick={() => this.department('department')} />
                                         <TreeItem nodeId="10" label="CC - User" onClick={() => this.costCenter('costCenter')} />
-                                        <TreeItem nodeId="6" label="Cancellation" onClick={() => this.cancellation('cancellation')} />
+                                        {/* <TreeItem nodeId="6" label="Cancellation" onClick={() => this.cancellation('cancellation')} /> */}
                                     </TreeItem>
                                 </TreeView>
 
-                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                {(localStorage.getItem('dept') === 'ACC') ? <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
                                     <TreeItem nodeId="d" label="ACC">
                                         <TreeItem nodeId="7" label="Waiting FA after approval" onClick={() => this.acc('waitingFA')} />
                                         <TreeItem nodeId="8" label={'On waiting GM & MGR'} onClick={() => this.acc('waitingGM')} />
                                         <TreeItem nodeId="9" label={'Approval budget code diff'} onClick={() => this.acc('approvalBudget')} />
                                     </TreeItem>
-                                </TreeView>
+                                </TreeView> : ''}
 
 
-                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
-                                    <TreeItem nodeId="e" label="ITC">
-                                        <TreeItem nodeId="10" label="Waiting confirm" onClick={() => this.itc('waiting')} />
-                                        <TreeItem nodeId="11" label={'On confirmed'} onClick={() => this.itc('confirmed')} />
+                                {(localStorage.getItem('dept') === 'ITC BOI') || localStorage.getItem('dept') === 'ACC' ?
+                                    <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                        <TreeItem nodeId="e" label="ITC">
+                                            <TreeItem nodeId="10" label="Waiting confirm" onClick={() => this.itc('waiting')} />
+                                            <TreeItem nodeId="11" label={'On confirmed'} onClick={() => this.itc('confirmed')} />
+                                        </TreeItem>
+                                    </TreeView> : ''}
+
+                                {(localStorage.getItem('dept') === 'ACC') ? <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['f']}>
+                                    <TreeItem nodeId="f" label="Export">
+                                        <TreeItem nodeId="12" label="ProPlus" onClick={this.cipExport} />
                                     </TreeItem>
-                                </TreeView>
-
+                                </TreeView> : ''}
                             </Container>
                         </Paper>
                     </Grid>

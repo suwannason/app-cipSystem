@@ -215,22 +215,22 @@ class MoreDetail extends Component {
                         <Grid container spacing={0}>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Operating Date (Plan):</strong> {this.state.db?.data?.cipUpdate.planDate || "-"}
+                                    <strong>Operating Date (Plan):</strong> {this.state.db?.data?.cipUpdate?.planDate || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Operating Date (Act):</strong> {this.state.db?.data?.cipUpdate.actDate || "-"}
+                                    <strong>Operating Date (Act):</strong> {this.state.db?.data?.cipUpdate?.actDate || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={2}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Result: </strong> {this.state.db?.data?.cipUpdate.result || "-"}
+                                    <strong>Result: </strong> {this.state.db?.data?.cipUpdate?.result || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={4}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Reason diff (NG) Budget Actual: </strong> {this.state.db?.data?.cipUpdate.reasonDiff || "-"}
+                                    <strong>Reason diff (NG) Budget Actual: </strong> {this.state.db?.data?.cipUpdate?.reasonDiff || "-"}
                                 </Card>
                             </Grid>
                         </Grid>
@@ -238,45 +238,22 @@ class MoreDetail extends Component {
                         <Grid container spacing={0}>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Fixed Asset Code: </strong> {this.state.db?.data?.cipUpdate.fixedAssetCode || "-"}
+                                    <strong>Fixed Asset Code: </strong> {this.state.db?.data?.cipUpdate?.fixedAssetCode || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Class fixed asset: </strong> {this.state.db?.data?.cipUpdate.classFixedAsset || "-"}
+                                    <strong>Class fixed asset: </strong> {this.state.db?.data?.cipUpdate?.classFixedAsset || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Fixed asset name: </strong> {this.state.db?.data?.cipUpdate.fixAssetName || "-"}
+                                    <strong>Fixed asset name: </strong> {this.state.db?.data?.cipUpdate?.fixAssetName || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Serial no: </strong> {this.state.db?.data?.cipUpdate.serialNo || "-"}
-                                </Card>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container spacing={0}>
-                            <Grid item xs={3}>
-                                <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Process Die: </strong> {this.state.db?.data?.cipUpdate.processDie || "-"}
-                                </Card>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Model: </strong> {this.state.db?.data?.cipUpdate.model || "-"}
-                                </Card>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Cost center of User: </strong> {this.state.db?.data?.cipUpdate.costCenterOfUser || "-"}
-                                </Card>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Transfer to supplier: </strong> {this.state.db?.data?.cipUpdate.tranferToSupplier || "-"}
+                                    <strong>Serial no: </strong> {this.state.db?.data?.cipUpdate?.serialNo || "-"}
                                 </Card>
                             </Grid>
                         </Grid>
@@ -284,17 +261,40 @@ class MoreDetail extends Component {
                         <Grid container spacing={0}>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>ให้ขึ้น Fix Asset  กี่ตัว: </strong> {this.state.db?.data?.cipUpdate.upFixAsset || "-"}
+                                    <strong>Process Die: </strong> {this.state.db?.data?.cipUpdate?.processDie || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>New BFMor Add BFM: </strong> {this.state.db?.data?.cipUpdate.newBFMorAddBFM || "-"}
+                                    <strong>Model: </strong> {this.state.db?.data?.cipUpdate?.model || "-"}
+                                </Card>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>Cost center of User: </strong> {this.state.db?.data?.cipUpdate?.costCenterOfUser || "-"}
+                                </Card>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>Transfer to supplier: </strong> {this.state.db?.data?.cipUpdate?.tranferToSupplier || "-"}
+                                </Card>
+                            </Grid>
+                        </Grid>
+
+                        <Grid container spacing={0}>
+                            <Grid item xs={3}>
+                                <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>ให้ขึ้น Fix Asset  กี่ตัว: </strong> {this.state.db?.data?.cipUpdate?.upFixAsset || "-"}
+                                </Card>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>New BFMor Add BFM: </strong> {this.state.db?.data?.cipUpdate?.newBFMorAddBFM || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={6}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>Reason for delay: </strong> {this.state.db?.data?.cipUpdate.reasonForDelay || "-"}
+                                    <strong>Reason for delay: </strong> {this.state.db?.data?.cipUpdate?.reasonForDelay || "-"}
                                 </Card>
                             </Grid>
                         </Grid>
@@ -302,12 +302,12 @@ class MoreDetail extends Component {
                         <Grid container spacing={0}>
                             <Grid item xs={5}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>REMARK (Add CIP/BFM No.): </strong> {this.state.db?.data?.cipUpdate.remark || "-"}
+                                    <strong>REMARK (Add CIP/BFM No.): </strong> {this.state.db?.data?.cipUpdate?.remark || "-"}
                                 </Card>
                             </Grid>
                             <Grid item xs={7}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>ITC BOI type: </strong> {this.state.db?.data?.cipUpdate.boiType || "-"}
+                                    <strong>ITC BOI type: </strong> {this.state.db?.data?.cipUpdate?.boiType || "-"}
                                 </Card>
                             </Grid>
                         </Grid>

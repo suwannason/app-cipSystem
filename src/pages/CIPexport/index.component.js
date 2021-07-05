@@ -3,11 +3,25 @@ import React, { Component } from 'react';
 
 import { Grid, Card, CardActions, CardActionArea, CardContent, Button, Typography, CardMedia } from '@material-ui/core';
 
+import Loading from '../../components/loading/index.component';
 class CIPexport extends Component {
+    constructor() {
+        super();
+
+        this.state = {
+            loading: false,
+            message: 'Downloading CSV'
+        }
+    }
     render() {
+        let loading;
+        if (this.state.loading === true) {
+            loading = <Loading message={this.state.message} />
+        }
         return (
 
             <Grid container spacing={1}>
+                {loading}
                 <Grid item xs={6}>
                     <Card>
                         <CardActionArea>

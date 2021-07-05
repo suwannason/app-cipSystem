@@ -33,7 +33,7 @@ class ErrorBar extends React.Component {
             >
                 <MuiAlert variant="standard"
                     icon={<CircularProgress style={{ width: '20px', height: '20px', color: 'rgb(13 60 97)' }} />}
-                    elevation={6} style={{ backgroundColor: '#849095', color: '#1d2429' }}
+                    elevation={6} style={{ backgroundColor: '#ffc107', color: '#1d2429' }}
                 >{this.state.message}
                 </MuiAlert>
             </Snackbar>
