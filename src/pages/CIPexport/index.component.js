@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 
 import { Grid, Card, CardActions, CardActionArea, CardContent, Button, Typography, CardMedia } from '@material-ui/core';
 
+import { DataGrid } from '@material-ui/data-grid';
+
 import Loading from '../../components/loading/index.component';
+
 class CIPexport extends Component {
     constructor() {
         super();
@@ -37,11 +40,11 @@ class CIPexport extends Component {
                                 <Typography gutterBottom variant="h5"> Accounting </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                                across all continents except Antarctica</Typography>
+                                    across all continents except Antarctica</Typography>
                             </CardContent>
                         </CardActionArea>
                         <CardActions>
-                            <Button style={{ backgroundColor: '#7a57ce', color: 'aliceblue'}}>Download</Button>
+                            <Button style={{ backgroundColor: '#7a57ce', color: 'aliceblue' }}>Download</Button>
                         </CardActions>
                     </Card>
                 </Grid>
@@ -62,11 +65,11 @@ class CIPexport extends Component {
                                 <Typography gutterBottom variant="h5"> Accounting </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                                across all continents except Antarctica</Typography>
+                                    across all continents except Antarctica</Typography>
                             </CardContent>
                         </CardActionArea>
                         <CardActions>
-                            <Button style={{ backgroundColor: '#7a57ce', color: 'aliceblue'}}>Download</Button>
+                            <Button style={{ backgroundColor: '#7a57ce', color: 'aliceblue' }}>Download</Button>
                         </CardActions>
                     </Card>
                 </Grid>

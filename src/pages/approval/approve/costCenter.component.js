@@ -136,6 +136,10 @@ class Approve extends Component {
                 await form_dataInstance().post(`/approval/costCenter/prepare`, formdata);
 
                 this.setState({ success: true, message: 'Upload success.' })
+
+                setTimeout(() => {
+                    this.getData();
+                }, 1500);
             } else {
                 this.setState({ message: 'No file selected.', error: true, });
             }
