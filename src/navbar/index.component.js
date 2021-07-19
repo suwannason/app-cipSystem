@@ -14,6 +14,7 @@ import CIPhistpry from '../pages/CIPhistory/index.component';
 import CIPimport from '../pages/CSVupload/import.component';
 
 import CIPexport from '../pages/CIPexport/index.component';
+import ExportHistory from '../pages/CIPexport/history';
 import ITC from '../pages/itc/index.component';
 import ACC from '../pages/acc/index.component';
 import Department from '../pages/approval/approve/department.component';
@@ -44,6 +45,7 @@ class Navbar extends Component {
         this.cancellation = this.cancellation.bind(this);
         this.costCenter = this.costCenter.bind(this);
         this.notificationClick = this.notificationClick.bind(this);
+        this.exportHistory = this.exportHistory.bind(this)
     }
 
     componentDidMount() {
@@ -74,6 +76,9 @@ class Navbar extends Component {
     }
     cipExport() {
         this.setState({ element: <CIPexport /> })
+    }
+    exportHistory() {
+        this.setState({ element: <ExportHistory /> })
     }
     itc(page) {
         this.setState({ element: <ITC page={page} /> })
@@ -224,12 +229,13 @@ class Navbar extends Component {
                                 {(localStorage.getItem('dept') === 'ACC') ? <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['f']}>
                                     <TreeItem nodeId="f" label="Export">
                                         <TreeItem nodeId="12" label="ProPlus" onClick={this.cipExport} />
+                                        <TreeItem nodeId="13" label="History" onClick={this.exportHistory} />
                                     </TreeItem>
                                 </TreeView> : ''}
                             </Container>
                         </Paper>
                     </Grid>
-                    <Grid item xs={9} style={{ marginBottom: 'calc(5%)', marginTop: 'calc(7%)' }}>
+                    <Grid item xs={9} style={{ marginBottom: 'calc(5%)', marginTop: 'calc(7%)', }}>
                         <Container maxWidth="xl">
                             {this.state.element}
                         </Container>

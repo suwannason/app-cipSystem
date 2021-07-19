@@ -57,20 +57,25 @@ class waitingGM extends Component {
             preview = <Preview close={this.close} id={this.state.rowclick} />
         }
         const columns = [
-            // { field: 'preview', headerName: 'show', width: 80 },
             { field: 'cipNo', headerName: 'CIP No.', width: 120 },
             { field: 'subCipNo', headerName: 'Sub CIP No.', width: 120 },
             { field: 'vendor', headerName: 'Vendor', width: 130 },
             { field: 'name', headerName: 'Name', width: 200, },
-            { field: 'qty', headerName: 'Qty.', width: 80 },
+            // { field: 'qty', headerName: 'Qty.', width: 80 },
             { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
+            {
+                field: 'message', headerName: 'Waiting', width: 200, headerAlign: 'center',
+                renderCell: (params) => {
+                    return <p style={{ color: '#4caf50' }}>{params.value}</p>
+                }
+            }
             // { field: 'cc', headerName: 'CC', width: 80 },
         ];
         return (
-            
+
             <center>
                 {preview}
-                <div style={{ height: 650, width: 'calc(93%)', marginTop: 'calc(1%)' }}>
+                <div style={{ height: 650, width: '100%', marginTop: 'calc(1%)' }}>
                     <DataGrid
                         rows={this.state.data}
                         columns={columns}
