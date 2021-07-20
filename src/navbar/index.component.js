@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 
 import {
     Grid, Typography, AppBar, Button, Toolbar,
-    IconButton, Container, Badge, Popper, Fade, Paper
+    IconButton, Container, Badge, Paper
 } from '@material-ui/core';
 
 import { TreeView, TreeItem } from '@material-ui/lab';
 
-import { Menu, ExpandMore, ChevronRight, Notifications } from '@material-ui/icons';
+import { Menu, ExpandMore, ChevronRight } from '@material-ui/icons';
 
 import CIPlist from '../pages/CIPlist/index.component';
 import CIPhistpry from '../pages/CIPhistory/index.component';
@@ -23,6 +23,8 @@ import Cancellation from '../pages/approval/cancel/index.component';
 
 import { reload } from '../middleware/index';
 
+import { app_jsonInstance } from '../configurations/instance';
+
 class Navbar extends Component {
     constructor() {
         super();
@@ -30,9 +32,12 @@ class Navbar extends Component {
         this.state = {
             element: null,
             style: null,
-            noti: false,
-            anchorEl: null,
-            navIndex: 1
+            ccRequester: null,
+            ccUser: null,
+            waitingFA: null,
+            codeDiff: null,
+            itcWating: null,
+            itcConfirmed: null,
         };
 
         this.cipList = this.cipList.bind(this);
@@ -44,12 +49,30 @@ class Navbar extends Component {
         this.department = this.department.bind(this);
         this.cancellation = this.cancellation.bind(this);
         this.costCenter = this.costCenter.bind(this);
-        this.notificationClick = this.notificationClick.bind(this);
-        this.exportHistory = this.exportHistory.bind(this)
+        this.exportHistory = this.exportHistory.bind(this);
+        this.getNumber = this.getNumber.bind(this);
     }
 
     componentDidMount() {
         this.cipList();
+        this.getNumber();
+    }
+    async getNumber() {
+        try {
+
+            const response = await app_jsonInstance().get(`/notification`);
+
+            this.setState({
+                ccRequester: (response.data.data.ccRequester === '0') ? null : response.data.data.ccRequester,
+                ccUser: (response.data.data.ccUser === '0') ? null : response.data.data.ccUser,
+                waitingFA: (response.data.data.waitingFA === '0') ? null : response.data.data.waitingFA,
+                codeDiff: (response.data.data.codeDiff === '0') ? null : response.data.data.codeDiff,
+                itcWating: (response.data.data.itcConfirm === '0') ? null : response.data.data.itcConfirm,
+                itcConfirmed: (response.data.data.itcConfirmed === '0') ? null : response.data.data.itcConfirmed,
+            })
+        } catch (err) {
+            console.log(err.stack);
+        }
     }
     costCenter() {
         this.setState({ element: <CostCenter /> })
@@ -83,19 +106,6 @@ class Navbar extends Component {
     itc(page) {
         this.setState({ element: <ITC page={page} /> })
     }
-    notificationClick(event) {
-        if (this.state.navIndex === 1) {
-            this.setState({ navIndex: 0 })
-        }
-        if (this.state.navIndex === 0) {
-            this.setState({ navIndex: 1 })
-        }
-        this.setState({
-            anchorEl: event.currentTarget,
-            noti: !this.state.noti,
-
-        })
-    }
     logout() {
         localStorage.clear();
 
@@ -108,80 +118,10 @@ class Navbar extends Component {
                     <Toolbar style={{ background: 'linear-gradient(90deg, rgba(98,172,231,1) 19%, rgba(135,229,242,1) 44%, rgba(147,224,219,1) 81%)', }}>
                         <IconButton> <Menu style={{ color: '#3f51b5' }} /> </IconButton>
                         <Typography variant="h6" style={{ flexGrow: 1 }}>CIP system</Typography>
-                        <Badge badgeContent={4} max={99} color="secondary" style={{ marginRight: 'calc(75%)' }}>
-                            <Notifications style={{ color: '#081648', cursor: 'pointer' }} onClick={this.notificationClick} />
-                        </Badge>
-                        <Button style={{ backgroundColor: '#e91e63', color: 'aliceblue', }} onClick={this.logout}> logout </Button>
+                        <Button style={{ backgroundColor: 'rgb(43 31 31)', color: 'aliceblue', }} onClick={this.logout}> logout </Button>
                     </Toolbar>
                 </AppBar>
 
-                <Popper open={this.state.noti} anchorEl={this.state.anchorEl} placement="bottom" transition>
-                    {({ TransitionProps }) => (
-                        <Fade {...TransitionProps} timeout={350}>
-                            <Paper style={{ width: '250px', }}>
-                                <Grid container spacing={0} style={{
-                                    borderLeft: '8px solid rgb(56 107 239)',
-                                    backgroundColor: 'rgb(255 255 255)',
-                                    borderRadius: '5px'
-                                }}
-                                >
-                                    <Grid item xs={12} style={{
-                                        fontWeight: 700,
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        marginTop: '5px',
-                                        marginBottom: '5px'
-                                    }} onClick={this.department}>
-                                        CC requester
-                                    </Grid>
-
-                                    <Grid item xs={12} style={{
-                                        maxWidth: 'calc(100% - 15px)',
-                                        fontSize: '14px',
-                                        lineHeight: '150%',
-                                        wordWrap: 'break-word',
-                                        cursor: 'pointer',
-                                        marginBottom: 0,
-                                        marginTop: 0
-                                    }} onClick={this.department}>
-                                        4 CIP checked on 2021/16/25 16:43
-                                    </Grid>
-                                </Grid>
-
-
-                                <Grid container spacing={0} style={{
-                                    borderLeft: '8px solid rgb(56 107 239)',
-                                    backgroundColor: 'rgb(255 255 255)',
-                                    borderRadius: '5px'
-                                }} onClick={this.costCenter}
-                                >
-                                    <Grid item xs={12} style={{
-                                        fontWeight: 700,
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        marginTop: '5px',
-                                        marginBottom: '5px'
-                                    }}>
-                                        CC user
-                                    </Grid>
-
-                                    <Grid item xs={12} style={{
-                                        maxWidth: 'calc(100% - 15px)',
-                                        fontSize: '14px',
-                                        cursor: 'pointer',
-                                        lineHeight: '150%',
-                                        wordWrap: 'break-word',
-                                        marginBottom: 0,
-                                        marginTop: 0
-                                    }} onClick={this.costCenter}>
-                                        4 CIP checked on 2021/16/25 16:43
-                                    </Grid>
-                                </Grid>
-                            </Paper>
-                        </Fade>
-                    )}
-                </Popper>
-                {/* #d9eef1 */}
                 <Grid container spacing={0} style={{ flexGrow: 1, }}>
                     <Grid item xs={3} style={{ marginTop: 'calc(5.5%)', }}>
                         <Paper style={{ position: 'absolute', width: '25%', height: '100%', backgroundColor: '#d9eef1', }} elevation={0}>
@@ -203,26 +143,27 @@ class Navbar extends Component {
 
                                 <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['c']}>
                                     <TreeItem nodeId="c" label="Approval">
-                                        <TreeItem nodeId="5" label="CC - Requester" onClick={() => this.department('department')} />
-                                        <TreeItem nodeId="10" label="CC - User" onClick={() => this.costCenter('costCenter')} />
+
+                                        <TreeItem nodeId="5" label={<Badge badgeContent={this.state.ccRequester} color="secondary">CC - Requester</Badge>} onClick={() => this.department('department')} />
+                                        <TreeItem nodeId="10" label={<Badge badgeContent={this.state.ccUser} color="secondary">CC - User</Badge>} onClick={() => this.costCenter('costCenter')} />
                                         {/* <TreeItem nodeId="6" label="Cancellation" onClick={() => this.cancellation('cancellation')} /> */}
                                     </TreeItem>
                                 </TreeView>
 
-                                {(localStorage.getItem('dept') === 'ACC') ? <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                {(localStorage.getItem('dept') === 'ACC') ? <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['d']}>
                                     <TreeItem nodeId="d" label="ACC">
-                                        <TreeItem nodeId="7" label="Waiting FA after approval" onClick={() => this.acc('waitingFA')} />
+                                        <TreeItem nodeId="7" label={<Badge badgeContent={this.state.waitingFA} color="secondary">Waiting FA after approval</Badge>} onClick={() => this.acc('waitingFA')} />
                                         <TreeItem nodeId="8" label={'On waiting GM & MGR'} onClick={() => this.acc('waitingGM')} />
-                                        <TreeItem nodeId="9" label={'Approval budget code diff'} onClick={() => this.acc('approvalBudget')} />
+                                        <TreeItem nodeId="9" label={<Badge badgeContent={this.state.codeDiff} color="secondary">Approval budget code diff</Badge>} onClick={() => this.acc('approvalBudget')} />
                                     </TreeItem>
                                 </TreeView> : ''}
 
 
                                 {(localStorage.getItem('dept') === 'ITC BOI') || localStorage.getItem('dept') === 'ACC' ?
-                                    <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                    <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['e']}>
                                         <TreeItem nodeId="e" label="ITC">
-                                            <TreeItem nodeId="10" label="Waiting confirm" onClick={() => this.itc('waiting')} />
-                                            <TreeItem nodeId="11" label={'On confirmed'} onClick={() => this.itc('confirmed')} />
+                                            <TreeItem nodeId="10" label={<Badge badgeContent={this.state.itcWating} color="secondary">Waiting confirm</Badge>} onClick={() => this.itc('waiting')} />
+                                            <TreeItem nodeId="11" label={<Badge badgeContent={this.state.itcConfirmed} color="secondary">On confirmed</Badge>} onClick={() => this.itc('confirmed')} />
                                         </TreeItem>
                                     </TreeView> : ''}
 

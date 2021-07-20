@@ -46,7 +46,8 @@ class ApprovalBudget extends Component {
         try {
             const response = await app_jsonInstance().get(`/acc/diff`);
 
-            this.setState({ data: response.data.data,
+            this.setState({
+                data: response.data.data,
                 all: response.data.data
             });
         } catch (error) {
@@ -55,12 +56,14 @@ class ApprovalBudget extends Component {
             if (error.response.status === 401) {
                 localStorage.clear();
                 reload();
+            } else if (error.response.status === 409) {
+                this.setState({ error: true, message: error.response.data.message })
             }
         }
     }
     reject() {
         if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to reject.'})
+            this.setState({ error: true, message: 'Please select CIP to reject.' })
             setTimeout(() => {
                 this.setState({ error: false, })
             }, 3000);
@@ -70,7 +73,7 @@ class ApprovalBudget extends Component {
     async check() {
         this.setState({ loading: true, message: 'Approving CIP.' });
         if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to check.'})
+            this.setState({ error: true, message: 'Please select CIP to check.' })
             setTimeout(() => {
                 this.setState({ error: false, })
             }, 3000);
@@ -83,7 +86,7 @@ class ApprovalBudget extends Component {
         const response = await app_jsonInstance().put(`/acc/approve/diff`, body);
         this.setState({ message: response.data.message, success: true, loading: false, });
         setTimeout(() => {
-            this.setState({ success: false,});
+            this.setState({ success: false, });
             this.getData();
         }, 3500);
 

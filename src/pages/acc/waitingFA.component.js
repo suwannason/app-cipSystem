@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { Grid, Card, Button } from '@material-ui/core';
 import { DataGrid, } from '@material-ui/data-grid';
-import { app_jsonInstance } from '../../configurations/instance';
+import { app_jsonInstance, } from '../../configurations/instance';
 import { reload } from '../../middleware/index';
 import ErrorBar from '../../components/errorBar/index.component';
 import Preview from '../approval/components/moreDetail.component';

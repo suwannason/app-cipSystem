@@ -18,12 +18,12 @@ class Footer extends Component {
 
                     <Grid itex xs={4}>
                         <center>
-                            CIP system
+                            CIP system [Create By ICD]
                         </center>
                     </Grid>
                     <Grid itex xs={4}>
                         <center>
-                            Contact 5211 (Au ICD)
+                            Contact 8120 (Au)
                         </center>
                     </Grid>
                 </Grid>
