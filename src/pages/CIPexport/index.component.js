@@ -4,18 +4,40 @@ import React, { Component } from 'react';
 import { Grid, FormHelperText, NativeSelect, InputLabel, FormControl, Button, Card } from '@material-ui/core';
 
 import { DataGrid } from '@material-ui/data-grid';
+import { app_jsonInstance } from '../../configurations/instance';
 export default class ExportProplus extends Component {
 
     constructor() {
         super();
 
         this.state = {
-            selectValue: 'none'
+            selectValue: 'none',
+            rowData: [],
+            loading: false,
         };
-        this.selectChange = this.selectChange.bind(this)
+        this.selectChange = this.selectChange.bind(this);
+        this.search = this.search.bind(this);
     }
     selectChange(event) {
         this.setState({ selectValue: event.target.value })
+    }
+    async search() {
+        try {
+            if (this.state.selectValue === 'none') {
+                return;
+            }
+
+            this.setState({ loading: true, })
+            const response = await app_jsonInstance().post(`/export`, { workType: this.state.selectValue });
+
+            this.setState({ loading: false, rowData: response.data.data });
+
+        } catch (err) {
+            console.log(err.stack);
+        }
+    }
+    rowClicked() {
+        
     }
     render() {
         return (
@@ -46,7 +68,7 @@ export default class ExportProplus extends Component {
                             </FormControl>
                         </Grid>
                         <Grid item xs={7}>
-                            <Button variant="outlined" size="medium" style={{ backgroundColor: '#2196f3', color: 'aliceblue' }}>Search</Button>
+                            <Button variant="outlined" size="medium" style={{ backgroundColor: '#2196f3', color: 'aliceblue' }} onClick={this.search}>Search</Button>
                         </Grid>
                         <Grid item xs={2}>
                             <Button variant="outlined" size="medium" style={{ backgroundColor: '#009688', color: 'aliceblue' }}>Exports</Button>
@@ -58,7 +80,7 @@ export default class ExportProplus extends Component {
                     <Grid item xs={12}>
                         <div style={{ width: '100%', height: '600px' }}>
                             <DataGrid
-                                rows={[]}
+                                rows={this.state.rowData}
                                 columns={[
                                     { field: 'cipNo', headerName: 'CIP No.', width: 120 },
                                     { field: 'subCipNo', headerName: 'Sub CIP No.', width: 130 },
@@ -68,6 +90,8 @@ export default class ExportProplus extends Component {
                                     { field: 'totalThb', headerName: 'Total (THB)', width: 130 },
                                     { field: 'cc', headerName: 'CC', width: 80 },
                                 ]}
+                                loading={this.state.loading}
+                                disableSelectionOnClick={true}
                                 checkboxSelection={true}
                                 pageSize={10}
                             />

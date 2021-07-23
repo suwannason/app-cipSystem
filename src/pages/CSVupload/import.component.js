@@ -75,7 +75,12 @@ class Import extends Component {
                 reload();
             }, 2000);
         } catch (error) {
-            console.log(error.stack);
+            if (error.response) {
+                this.setState({ error: true, message: error.response.data.message })
+            }
+            setTimeout(() => {
+                this.setState({ error: false,})
+            }, 3000);
         }
     }
     render() {
