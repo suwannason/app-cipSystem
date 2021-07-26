@@ -10,6 +10,8 @@ import Preview from '../components/moreDetail.component';
 import Loading from '../../../components/loading/index.component';
 import Success from '../../../components/successBar/index.component';
 
+import TextInput from '../../../components/SingleTexfield/index.component';
+
 class Approve extends Component {
     constructor() {
         super();
@@ -185,6 +187,7 @@ class Approve extends Component {
                 {error}{preview}{loading}{success}
 
                 <Grid container spacing={0}>
+                    <TextInput />
                     <Grid item xs={3}>
                         {this.state.headerMessage}
                     </Grid>
@@ -193,7 +196,7 @@ class Approve extends Component {
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
-                            <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: 'rgb(128 214 145)', color: 'aliceblue' }} onClick={this.check}>
+                            <Button variant="outlined" style={{ marginRight: 'calc(4%)', backgroundColor: 'rgb(128 214 145)', color: 'aliceblue' }} onClick={this.check}>
                                 Approve
                             </Button>
                             <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.reject}>
