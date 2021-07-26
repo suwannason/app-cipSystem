@@ -124,7 +124,7 @@ class CIPlist extends Component {
     }
     async getData() {
         try {
-            const response = await app_jsonInstance().get(`/cip/list`);
+            const response = await app_jsonInstance().get(`/cip/history`);
 
             this.setState({ data: response.data.data, all: response.data.data })
         } catch (error) {
@@ -166,12 +166,12 @@ class CIPlist extends Component {
     }
     render() {
         const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 130 },
-            { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            // { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 375, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 130 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
             { field: 'cc', headerName: 'CC', width: 80 },
         ];
         return (
@@ -184,6 +184,7 @@ class CIPlist extends Component {
                         </Card>
                     </Grid>
                 </Grid>
+
                 <Grid container spacing={1}>
                     <Grid item xs={3}>
                         <TextField label="CIP No." onChange={this.cipNoChange} value={this.state.cipNo} />
@@ -198,6 +199,7 @@ class CIPlist extends Component {
 
                     </Grid>
                 </Grid>
+
                 <div style={{ height: 600, width: '100%', marginTop: 'calc(1%)' }}>
                     <DataGrid
                         rows={this.state.data}

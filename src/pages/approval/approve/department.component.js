@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { Grid, Card, Button } from '@material-ui/core';
 import { DataGrid, } from '@material-ui/data-grid';
-import { app_jsonInstance, none_headersInstance } from '../../../configurations/instance';
+import { app_jsonInstance, none_headersInstance, blob_response } from '../../../configurations/instance';
 import { reload } from '../../../middleware/index';
 import ErrorBar from '../../../components/errorBar/index.component';
 import Preview from '../components/moreDetail.component';
@@ -33,6 +33,7 @@ class Approve extends Component {
         this.reject = this.reject.bind(this);
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
+        this.download = this.download.bind(this)
     }
 
     componentDidMount() {
@@ -42,6 +43,43 @@ class Approve extends Component {
 
     openSetroute() {
         this.setState({ setroute: true })
+    }
+    async download() {
+        try {
+            const body = {};
+            if (this.state.dataSelected.length === 0) {
+                const id = [];
+                this.state.all.forEach((item) => {
+                    id.push(item.id);
+                });
+                body.id = id;
+            } else {
+                body.id =  this.state.dataSelected;
+            }
+            const response = await blob_response().patch(`/approval/download`, body);
+
+            if (window.navigator.msSaveBlob) //IE & Edge
+            { //msSaveBlob only available for IE & Edge
+                console.log("IE & Edge")
+                // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const blob = new File([response.data], "cost-center.xlsx")
+                window.navigator.msSaveBlob(blob, `cost-center.xlsx`);
+            }
+            else //Chrome & FF
+            {
+                console.log("Chrome")
+                const url = window.URL.createObjectURL(new File([response.data], "cost-center.xlsx"));
+                // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `cost-center.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+            }
+
+        } catch (err) {
+
+        }
     }
     async getData() {
         try {
@@ -78,8 +116,8 @@ class Approve extends Component {
         await Promise.all(response);
 
         this.setState({ success: true, message: 'Reject CIP success.' });
-
         setTimeout(() => {
+            this.getData();
             this.setState({ success: false, });
         }, 3000);
 
@@ -119,14 +157,13 @@ class Approve extends Component {
     }
     render() {
         const columns = [
-            // { field: 'preview', headerName: 'show', width: 80 },
-            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 120 },
-            { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            // { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 375, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
-            // { field: 'cc', headerName: 'CC', width: 80 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
+            { field: 'cc', headerName: 'CC', width: 80 },
         ];
         let error;
         if (this.state.error === true) {
@@ -148,8 +185,11 @@ class Approve extends Component {
                 {error}{preview}{loading}{success}
 
                 <Grid container spacing={0}>
-                    <Grid item xs={9}>
+                    <Grid item xs={3}>
                         {this.state.headerMessage}
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button variant="contained" style={{ backgroundColor: '#2196f3', color: 'aliceblue'}} onClick={this.download}>Download</Button>
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >

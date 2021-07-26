@@ -163,7 +163,7 @@ class Navbar extends Component {
                                     <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['e']}>
                                         <TreeItem nodeId="e" label="ITC">
                                             <TreeItem nodeId="10" label={<Badge badgeContent={this.state.itcWating} color="secondary">Waiting confirm</Badge>} onClick={() => this.itc('waiting')} />
-                                            <TreeItem nodeId="11" label={<Badge badgeContent={this.state.itcConfirmed} color="secondary">On confirmed</Badge>} onClick={() => this.itc('confirmed')} />
+                                            {/* <TreeItem nodeId="11" label={<Badge badgeContent={this.state.itcConfirmed} color="secondary">On confirmed</Badge>} onClick={() => this.itc('confirmed')} /> */}
                                         </TreeItem>
                                     </TreeView> : ''}
 

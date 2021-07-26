@@ -183,12 +183,12 @@ class CIPlist extends Component {
             error = <Error message={this.state.message} />
         }
         const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 130 },
-            { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            // { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 375, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 130 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
             { field: 'cc', headerName: 'CC', width: 80 },
         ];
         return (

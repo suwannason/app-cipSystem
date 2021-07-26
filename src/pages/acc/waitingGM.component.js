@@ -57,19 +57,20 @@ class waitingGM extends Component {
             preview = <Preview close={this.close} id={this.state.rowclick} />
         }
         const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 120 },
-            { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
-            // { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
             {
-                field: 'message', headerName: 'Waiting', width: 200, headerAlign: 'center',
+                field: 'message', headerName: 'Waiting', width: 210, headerAlign: 'center',
                 renderCell: (params) => {
                     return <p style={{ color: '#4caf50' }}>{params.value}</p>
                 }
-            }
+            },
+            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            // { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 320, },
+            { field: 'qty', headerName: 'Qty.', width: 80 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
             // { field: 'cc', headerName: 'CC', width: 80 },
+            
         ];
         return (
 

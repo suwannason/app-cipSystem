@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { Grid, Card, Button } from '@material-ui/core';
 import { DataGrid, } from '@material-ui/data-grid';
-import { app_jsonInstance } from '../../configurations/instance';
+import { app_jsonInstance, blob_response } from '../../configurations/instance';
 import { reload } from '../../middleware/index';
 import ErrorBar from '../../components/errorBar/index.component';
 import Preview from '../approval/components/moreDetail.component';
@@ -32,6 +32,7 @@ class ApprovalBudget extends Component {
         this.reject = this.reject.bind(this);
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
+        this.download = this.download.bind(this)
     }
 
     componentDidMount() {
@@ -68,6 +69,43 @@ class ApprovalBudget extends Component {
                 this.setState({ error: false, })
             }, 3000);
             return;
+        }
+    }
+    async download() {
+        try {
+            const body = {};
+            if (this.state.dataSelected.length === 0) {
+                const id = [];
+                this.state.all.forEach((item) => {
+                    id.push(item.id);
+                });
+                body.id = id;
+            } else {
+                body.id = this.state.dataSelected;
+            }
+            const response = await blob_response().patch(`/approval/download`, body);
+
+            if (window.navigator.msSaveBlob) //IE & Edge
+            { //msSaveBlob only available for IE & Edge
+                console.log("IE & Edge")
+                // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const blob = new File([response.data], "cost-center.xlsx")
+                window.navigator.msSaveBlob(blob, `CIP.xlsx`);
+            }
+            else //Chrome & FF
+            {
+                console.log("Chrome")
+                const url = window.URL.createObjectURL(new File([response.data], "cost-center.xlsx"));
+                // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `CIP.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+            }
+
+        } catch (err) {
+
         }
     }
     async check() {
@@ -135,7 +173,7 @@ class ApprovalBudget extends Component {
 
                 <Grid container spacing={0}>
                     <Grid item xs={9}>
-
+                        <Button variant="contained" style={{ backgroundColor: '#2196f3', color: 'aliceblue' }} onClick={this.download}>Download</Button>
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >

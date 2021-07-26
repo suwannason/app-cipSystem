@@ -72,24 +72,29 @@ class Approve extends Component {
         }
     }
     async check() {
-        this.setState({ loading: true, message: 'Approving CIP.' });
-        if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to check.' })
+        try {
+            this.setState({ loading: true, message: 'Approving CIP.' });
+            if (this.state.dataSelected.length === 0) {
+                this.setState({ error: true, message: 'Please select CIP to check.' })
+                setTimeout(() => {
+                    this.setState({ error: false, })
+                }, 3000);
+                return;
+            }
+            const body = {
+                id: this.state.dataSelected,
+            };
+    
+            const response = await app_jsonInstance().put(`/approval/approve/costCenter`, body);
+            this.setState({ message: response.data.message, success: true, loading: false, });
             setTimeout(() => {
-                this.setState({ error: false, })
-            }, 3000);
-            return;
+                this.setState({ success: false, });
+                this.getData();
+            }, 2000);
+        } catch (err) {
+            console.log(err.message)
+            console.log(err.stack);
         }
-        const body = {
-            id: this.state.dataSelected,
-        };
-
-        const response = await app_jsonInstance().put(`/approval/approve/costCenter`, body);
-        this.setState({ message: response.data.message, success: true, loading: false, });
-        setTimeout(() => {
-            this.setState({ success: false, });
-            this.getData();
-        }, 2000);
 
     }
     onSelectionModelChange(rows) {
@@ -100,14 +105,24 @@ class Approve extends Component {
     }
     async download() {
         try {
-            const response = await blob_response().get(`/approval/download`);
+            const body = {};
+            if (this.state.dataSelected.length === 0) {
+                const id = [];
+                this.state.all.forEach((item) => {
+                    id.push(item.id);
+                });
+                body.id = id;
+            } else {
+                body.id =  this.state.dataSelected;
+            }
+            const response = await blob_response().patch(`/approval/download`, body);
 
             if (window.navigator.msSaveBlob) //IE & Edge
             { //msSaveBlob only available for IE & Edge
                 console.log("IE & Edge")
                 // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 const blob = new File([response.data], "cost-center.xlsx")
-                window.navigator.msSaveBlob(blob, `cost-center.xlsx`);
+                window.navigator.msSaveBlob(blob, `CIP.xlsx`);
             }
             else //Chrome & FF
             {
@@ -116,7 +131,7 @@ class Approve extends Component {
                 // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', `cost-center.xlsx`);
+                link.setAttribute('download', `CIP.xlsx`);
                 document.body.appendChild(link);
                 link.click();
             }
@@ -160,14 +175,13 @@ class Approve extends Component {
     }
     render() {
         const columns = [
-            // { field: 'preview', headerName: 'show', width: 80 },
-            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 120 },
-            { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            // { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 375, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
-            // { field: 'cc', headerName: 'CC', width: 80 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
+            { field: 'cc', headerName: 'CC', width: 80 },
         ];
         let error;
         if (this.state.error === true) {
@@ -192,8 +206,9 @@ class Approve extends Component {
                     <Grid item xs={12} style={{ marginBottom: 'calc(2%)' }}>
                         {this.state.headerMessage}
                     </Grid>
-                    <input type="file" id="prepare-upload" hidden onChange={this.uploadApprove} />
+                    
                     <Grid item xs={9}>
+                    <input type="file" id="prepare-upload" hidden onChange={this.uploadApprove} />
                         <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(2%)' }} onClick={this.download}> Download </Button>
                         {(this.state.headerMessage.indexOf('prepare') !== -1)
                             ?

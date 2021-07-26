@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 
 import { Grid, Card, Button } from '@material-ui/core';
+import PreviewIcon from '@material-ui/icons/Pageview'
 import { DataGrid, } from '@material-ui/data-grid';
 import { app_jsonInstance } from '../../configurations/instance';
 import { reload } from '../../middleware/index';
@@ -25,6 +26,7 @@ class Approve extends Component {
             preview: false,
             message: 'Have some error.',
             rowclick: null,
+            boiConfig: [],
         };
         this.openSetroute = this.openSetroute.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
@@ -32,6 +34,7 @@ class Approve extends Component {
         this.reject = this.reject.bind(this);
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
+        this.boiSelectionChange = this.boiSelectionChange.bind(this)
     }
 
     componentDidMount() {
@@ -70,7 +73,7 @@ class Approve extends Component {
     }
     async check() {
         this.setState({ loading: true, message: 'Approving CIP.' });
-        if (this.state.dataSelected.length === 0) {
+        if (this.state.boiConfig.length === 0) {
             this.setState({ error: true, message: 'Please select CIP to check.' })
             setTimeout(() => {
                 this.setState({ error: false, })
@@ -78,8 +81,9 @@ class Approve extends Component {
             return;
         }
         const body = {
-            id: this.state.dataSelected,
+            confirm: this.state.boiConfig,
         };
+        console.log(this.state.boiConfig)
         try {
             const response = await app_jsonInstance().put(`/itc/confirm`, body);
             this.setState({ message: response.data.message, success: true, loading: false, });
@@ -109,17 +113,46 @@ class Approve extends Component {
     preview(data) {
         this.setState({ preview: true, rowclick: data.id })
     }
+    boiSelectionChange(id, boiType) {
+        let filter = this.state.boiConfig.filter(item => item.id !== id);
+        filter.push({ id, boiType, })
+
+        this.setState({
+            boiConfig: filter
+        })
+        // console.log(id, boiType)
+    }
     render() {
         const columns = [
-            // { field: 'preview', headerName: 'show', width: 80 },
-            { field: 'cipNo', headerName: 'CIP No.', width: 120 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 120 },
-            { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            // { field: 'vendor', headerName: 'Vendor', width: 130 },
+            { field: 'name', headerName: 'Name', width: 320, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
-            { field: 'status', headerName: 'status.', width: 120 },
-            // { field: 'cc', headerName: 'CC', width: 80 },
+            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
+            {
+                field: 'select', headerName: 'Confirm', width: 180, headerAlign: 'center',
+                renderCell: (params) => {
+                    return <>
+                        <Grid container>
+                            <Grid item xs={6} style={{ padding: '10px 10px 10px 0px' }}>
+                                <select style={{ padding: '5px'}} onChange={(event) => this.boiSelectionChange(params.id, event.target.value)}>
+                                    <option selected value="-">-</option>
+                                    <option value="BOI">BOI</option>
+                                    <option value="NON BOI">NON BOI</option>
+                                </select>
+                            </Grid>
+                            <Grid item xs={6} style={{ padding: '20px 10px 10px 30px' }}>
+                                <PreviewIcon
+                                    style={{ right: 'calc(3%)', top: 'calc(10%)', cursor: 'pointer', color: '#228fe6', width: '30px', height: '30px' }}
+                                    onClick={() => this.preview(params)}
+                                />
+                            </Grid>
+                        </Grid>
+
+                    </>
+                }
+            },
         ];
         let error;
         if (this.state.error === true) {
@@ -160,8 +193,8 @@ class Approve extends Component {
                         rows={this.state.data}
                         columns={columns}
                         pageSize={10}
-                        checkboxSelection
-                        onRowClick={(row) => this.preview(row)}
+                        checkboxSelection={false}
+                        // onRowClick={(row) => this.preview(row)}
                         // onRowSelected={(row) => this.selectionRow(row)}
                         onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
                         disableSelectionOnClick={true}
