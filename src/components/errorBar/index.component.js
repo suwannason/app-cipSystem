@@ -26,7 +26,7 @@ class ErrorBar extends React.Component {
                 onClose={this.handleClose}
                 TransitionComponent={(props) => <><Slide {...props} direction="left" /></>}
             >
-                <MuiAlert variant="filled" severity="error" elevation={6} style={{ backgroundColor: '#f50057', color: '#eff2f7' }}>{this.state.message}</MuiAlert>
+                <MuiAlert variant="filled" severity="error" elevation={6} style={{ backgroundColor: 'rgb(202 6 6)', color: 'rgb(255 255 255)' }}>{this.state.message}</MuiAlert>
             </Snackbar>
         )
     }

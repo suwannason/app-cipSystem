@@ -20,6 +20,7 @@ import ACC from '../pages/acc/index.component';
 import Department from '../pages/approval/approve/department.component';
 import CostCenter from '../pages/approval/approve/costCenter.component';
 import Cancellation from '../pages/approval/cancel/index.component';
+import Users from '../pages/users/index.component';
 
 import { reload } from '../middleware/index';
 
@@ -51,6 +52,7 @@ class Navbar extends Component {
         this.costCenter = this.costCenter.bind(this);
         this.exportHistory = this.exportHistory.bind(this);
         this.getNumber = this.getNumber.bind(this);
+        this.users = this.users.bind(this);
     }
 
     componentDidMount() {
@@ -77,7 +79,9 @@ class Navbar extends Component {
     costCenter() {
         this.setState({ element: <CostCenter /> })
     }
-
+    users() {
+        this.setState({ element: <Users /> })
+    }
     department() {
         this.setState({ element: <Department /> })
     }
@@ -171,6 +175,7 @@ class Navbar extends Component {
                                     <TreeItem nodeId="f" label="Export">
                                         <TreeItem nodeId="12" label="ProPlus" onClick={this.cipExport} />
                                         <TreeItem nodeId="13" label="History" onClick={this.exportHistory} />
+                                        <TreeItem nodeId="14" label="Users management" onClick={this.users} />
                                     </TreeItem>
                                 </TreeView> : ''}
                             </Container>

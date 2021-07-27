@@ -33,6 +33,7 @@ class CIPlist extends Component {
         this.nameChange = this.nameChange.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
         this.download = this.download.bind(this);
+        this.rowClicked = this.rowClicked.bind(this)
     }
 
     componentDidMount() {
@@ -128,6 +129,15 @@ class CIPlist extends Component {
                     return item.cipNo.indexOf(this.state.cipNo) !== -1
                 })
             })
+        }
+    }
+    rowClicked(event) {
+        if (event.row.status === 'reject') {
+            this.setState({ error: true, message: event.row.commend });
+
+            setTimeout(() => {
+                this.setState({ error: false, })
+            }, 5000);
         }
     }
     async getData() {
@@ -263,6 +273,7 @@ class CIPlist extends Component {
                         columns={columns}
                         pageSize={10}
                         checkboxSelection
+                        onRowClick={(row) => this.rowClicked(row)}
                         // onRowSelected={(row) => this.selectionRow(row)}
                         onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
                         disableSelectionOnClick={true}
