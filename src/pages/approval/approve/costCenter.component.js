@@ -34,6 +34,7 @@ class Approve extends Component {
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
         this.uploadApprove = this.uploadApprove.bind(this);
+        this.download = this.download.bind(this);
     }
 
     componentDidMount() {
@@ -137,7 +138,7 @@ class Approve extends Component {
             }
 
         } catch (err) {
-
+            console.log(err.stack);
         }
     }
     uploadClick() {
@@ -212,7 +213,7 @@ class Approve extends Component {
                         <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(2%)' }} onClick={this.download}> Download </Button>
                         {(this.state.headerMessage.indexOf('prepare') !== -1)
                             ?
-                            <Button variant="outlined" id="input" style={{ backgroundColor: '#8bc34a', color: 'aliceblue', }} onClick={this.uploadClick}> upload & approve </Button> : ''}
+                            <Button variant="outlined" id="input" style={{ backgroundColor: '#8bc34a', color: 'aliceblue', }} onClick={this.uploadClick}> {'upload & approve'} </Button> : ''}
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)', color: 'aliceblue' }} variant="outlined" >

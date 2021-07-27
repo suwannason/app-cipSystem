@@ -51,7 +51,7 @@ class CIPlist extends Component {
         if (idOnSelect.length === 1) {
             this.setState({ deptInput: true, idSelected: idOnSelect, })
         } else {
-            this.setState({ error: true, message: 'Please select 1 row to input. '})
+            this.setState({ error: true, message: 'Please select 1 row to input. ' })
         }
 
         setTimeout(() => {
@@ -183,13 +183,49 @@ class CIPlist extends Component {
             error = <Error message={this.state.message} />
         }
         const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            {
+                field: 'cipNo', headerName: 'CIP No.', width: 100, renderCell: (params) => {
+                    if (params.row.status === 'reject') {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cipNo}</div>
+                    }
+                }
+            },
+            {
+                field: 'subCipNo', headerName: 'Sub CIP No.', width: 95, renderCell: (params) => {
+                    if (params.row.status === 'reject') {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.subCipNo}</div>
+                    }
+                }
+            },
             // { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 375, },
-            { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
-            { field: 'cc', headerName: 'CC', width: 80 },
+            {
+                field: 'name', headerName: 'Name', width: 375, renderCell: (params) => {
+                    if (params.row.status === 'reject') {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.name}</div>
+                    }
+                }
+            },
+            {
+                field: 'qty', headerName: 'Qty.', width: 80, renderCell: (params) => {
+                    if (params.row.status === 'reject') {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.qty}</div>
+                    }
+                }
+            },
+            {
+                field: 'totalThb', headerName: 'Total (THB)', width: 120, renderCell: (params) => {
+                    if (params.row.status === 'reject') {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.totalThb}</div>
+                    }
+                }
+            },
+            {
+                field: 'cc', headerName: 'CC', width: 80, renderCell: (params) => {
+                    if (params.row.status === 'reject') {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cc}</div>
+                    }
+                }
+            },
         ];
         return (
             <>
@@ -203,7 +239,7 @@ class CIPlist extends Component {
                     </Grid>
                 </Grid>
                 <Grid container spacing={0} style={{ marginTop: 'calc(1%)', textAlign: 'center' }}>
-                    <Grid item xs={12} style={{ textAlign: 'right'}}>
+                    <Grid item xs={12} style={{ textAlign: 'right' }}>
                         <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', }} onClick={this.download}> Download </Button>
                     </Grid>
                 </Grid>

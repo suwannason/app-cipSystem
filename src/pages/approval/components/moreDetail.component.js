@@ -55,7 +55,6 @@ class MoreDetail extends Component {
         try {
             const response = await none_headersInstance().get(`/cip/${this.props.id.toString()}`);
 
-            console.log(response.data)
             this.setState({ db: response.data });
             this.setSignature();
         } catch (error) {
