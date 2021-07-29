@@ -11,6 +11,8 @@ import { DataGrid } from '@material-ui/data-grid';
 
 import DeptInput from './deptInput.component';
 
+import EditCIP from './edit.component';
+
 class CIPlist extends Component {
     constructor() {
         super();
@@ -25,6 +27,7 @@ class CIPlist extends Component {
             name: '',
             error: false,
             message: 'Error',
+            edit: false,
         };
         this.getData = this.getData.bind(this);
         this.close = this.close.bind(this);
@@ -33,7 +36,8 @@ class CIPlist extends Component {
         this.nameChange = this.nameChange.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
         this.download = this.download.bind(this);
-        this.rowClicked = this.rowClicked.bind(this)
+        this.rowClicked = this.rowClicked.bind(this);
+        this.openEdit = this.openEdit.bind(this);
     }
 
     componentDidMount() {
@@ -41,8 +45,19 @@ class CIPlist extends Component {
     }
 
     close() {
-        this.setState({ deptInput: false, })
+        this.setState({ deptInput: false, edit: false, })
         this.getData();
+    }
+    openEdit() {
+        if (this.state.dataSelected.length === 1) {
+            this.setState({ edit: true });
+        } else {
+            this.setState({ error: true, message: 'Please select CIP for edit 1 record.' });
+            setTimeout(() => {
+                this.setState({ error: false, })
+            }, 3000);
+        }
+
     }
     openDeptinput() {
         const idOnSelect = [];
@@ -192,6 +207,10 @@ class CIPlist extends Component {
         if (this.state.error === true) {
             error = <Error message={this.state.message} />
         }
+        let edit;
+        if (this.state.edit === true) {
+            edit = <EditCIP close={this.close} id={this.state.dataSelected[0]} />
+        }
         const columns = [
             {
                 field: 'cipNo', headerName: 'CIP No.', width: 100, renderCell: (params) => {
@@ -239,7 +258,7 @@ class CIPlist extends Component {
         ];
         return (
             <>
-                {deptInput}{error}
+                {deptInput}{error}{edit}
                 {this.state.hiddenInput}
                 <Grid container spacing={1}>
                     <Grid item xs={12}>
@@ -250,7 +269,8 @@ class CIPlist extends Component {
                 </Grid>
                 <Grid container spacing={0} style={{ marginTop: 'calc(1%)', textAlign: 'center' }}>
                     <Grid item xs={12} style={{ textAlign: 'right' }}>
-                        <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', }} onClick={this.download}> Download </Button>
+                        <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(1%)' }} onClick={this.download}> Download </Button>
+                        <Button variant="outlined" id="edit" style={{ backgroundColor: '#FF9800', color: 'aliceblue', }} onClick={this.openEdit}> Edit </Button>
                     </Grid>
                 </Grid>
                 <Grid container spacing={1}>

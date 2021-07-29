@@ -68,7 +68,7 @@ class waitingGM extends Component {
             // { field: 'vendor', headerName: 'Vendor', width: 130 },
             { field: 'name', headerName: 'Name', width: 320, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
+            { field: 'totalOfCip', headerName: 'Total (THB)', width: 120 },
             // { field: 'cc', headerName: 'CC', width: 80 },
             
         ];

@@ -131,7 +131,7 @@ class Navbar extends Component {
                         <Paper style={{ position: 'absolute', width: '25%', height: '100%', backgroundColor: '#d9eef1', }} elevation={0}>
                             <Container maxWidth="xl" style={{ height: 100, flexGrow: 1 }}>
 
-                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />}>
+                                <TreeView defaultCollapseIcon={<ExpandMore />} defaultExpandIcon={<ChevronRight />} defaultExpanded={['a']}>
                                     <TreeItem nodeId="a" label="Search">
                                         <TreeItem nodeId="1" label="CIP List" onClick={this.cipList} />
                                         <TreeItem nodeId="2" label="CIP History" onClick={this.cipHistory} />

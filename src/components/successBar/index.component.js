@@ -5,7 +5,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Slide from '@material-ui/core/Slide';
 
-class ErrorBar extends React.Component {
+class SuccessBar extends React.Component {
 
     constructor(props) {
         super(props);
@@ -32,4 +32,4 @@ class ErrorBar extends React.Component {
     }
 }
 
-export default ErrorBar;
+export default SuccessBar;
