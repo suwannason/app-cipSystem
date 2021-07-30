@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 
-import { Grid, TextField, Card, } from '@material-ui/core';
-import { none_headersInstance } from '../../../configurations/instance'
+import { Grid, TextField, Card, Tooltip } from '@material-ui/core';
+import { none_headersInstance, app_jsonInstance } from '../../../configurations/instance';
 
+import { ArrowDropDown, RemoveCircleOutlineRounded } from '@material-ui/icons';
+import UserEdit from './userEdit.component';
+
+import ErrorBar from '../../../components/errorBar/index.component';
 // PROPS CONTEXT
 
 // id=string
 // submit=function(cip)
+// readonly=bool
 
 // PROPS CONTEXT
 
@@ -17,15 +22,23 @@ class AccountEdit extends Component {
         this.state = {
             cip: null,
             workType: '',
+            userConfirmData: null,
+            success: false,
+            disable: false,
+            message: '',
+            error: '',
         };
         this.getData = this.getData.bind(this);
+        this.userConfirmData = this.userConfirmData.bind(this)
     }
-    componentDidMount() {
-        this.getData();
+    async componentDidMount() {
+        this.setState({ disable: this.props.readonly })
+        await this.getData();
     }
 
     async getData() {
         try {
+
             const response = await none_headersInstance().get(`/cip/${this.props.id}`)
 
             document.getElementById('acqDate').value = response.data.data.acqDate;
@@ -56,8 +69,9 @@ class AccountEdit extends Component {
             document.getElementById('totalThb_1').value = response.data.data.totalThb_1;
             document.getElementById('vendor').value = response.data.data.vendor;
             document.getElementById('vendorCode').value = response.data.data.vendorCode;
-            document.getElementById('workType').value =response.data.data.workType;
+            document.getElementById('workType').value = response.data.data.workType;
 
+            await this.setState({ success: false, })
         } catch (err) {
             console.log(err.stack);
         }
@@ -98,12 +112,53 @@ class AccountEdit extends Component {
         this.props.submit(cipChanged);
     }
 
+    async updateUserConfirm(body) {
+        try {
+            await app_jsonInstance().put(`/cipUpdate`, body);
+
+        } catch (err) {
+            if (err.response.status === 400) {
+                this.setState({ error: true, message: err.response.data.message });
+
+                setTimeout(() => {
+                    this.setState({ error: false, });
+
+                }, 3000);
+            }
+        }
+    }
+    async userConfirmData() {
+        try {
+            const response = await none_headersInstance().get(`/cipUpdate/${this.props.id}`);
+
+            const element = {};
+            if (response.data.data !== null && response.data.data) {
+                element.userConfirmData = <UserEdit id={this.props.id} submit={this.updateUserConfirm} readonly={true} />
+            } else {
+                element.userConfirmData = <div
+                style={{ fontSize: '26px', fontFamily: 'emoji', color: 'red', padding: '10px'}}>
+                    No User confirm data <RemoveCircleOutlineRounded />
+                </div>
+            }
+
+            this.setState(element)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     render() {
+        let error;
+
+        if (this.state.error === true) {
+            error = <ErrorBar message={this.state.message} />
+        }
         return (
             <>
-                <Grid container spacing={0} style={{ marginBottom: 'calc(2%)' }}>
+                <Grid container spacing={0} style={{ marginBottom: 'calc(3%)' }}>
+                    {error}
                     <Grid item xs={12}>
-                        <Card style={{ padding: '20px', }} variant="outlined">
+                        <Card style={{ padding: '20px', boxShadow: '1px 1px 1px 2px #93d9dc' }} variant="outlined">
                             Accounting edit CIP record
                         </Card>
                     </Grid>
@@ -111,7 +166,7 @@ class AccountEdit extends Component {
 
                 <Grid container spacing={0}>
                     <Grid item xs={3}>
-                        <select id="workType" style={{ width: 'calc(73%)', height: 'calc(100%)', borderRadius: '5px', borderColor: '#bfc5c3' }}>
+                        <select id="workType" style={{ width: 'calc(73%)', height: 'calc(100%)', borderRadius: '5px', borderColor: '#bfc5c3' }} disabled={this.state.disable}>
                             <option value="Domestic">Domestic</option>
                             <option value="Domestic-DIE">Domestic-DIE</option>
                             <option value="Oversea">Oversea</option>
@@ -120,113 +175,127 @@ class AccountEdit extends Component {
                         </select>
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" id="projectNo" label="Project No." size="small" />
+                        <TextField variant="outlined" id="projectNo" label="Project No." size="small" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" id="cipNo" label="CIP No." size="small" />
+                        <TextField variant="outlined" id="cipNo" label="CIP No." size="small" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Sub CIP No." id="subCipNo" size="small" />
+                        <TextField variant="outlined" label="Sub CIP No." id="subCipNo" size="small" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(2%)' }}>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="PO No." size="small" id="poNo" />
+                        <TextField variant="outlined" label="PO No." size="small" id="poNo" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Vendor code" size="small" id="vendorCode" />
+                        <TextField variant="outlined" label="Vendor code" size="small" id="vendorCode" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Vendor" size="small" id="vendor" />
+                        <TextField variant="outlined" label="Vendor" size="small" id="vendor" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="ACQ-DATE (ETD)" size="small" id="acqDate" />
+                        <TextField variant="outlined" label="ACQ-DATE (ETD)" size="small" id="acqDate" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(3%)' }}>
                     <Grid item xs={12}>
-                        <TextField style={{ width: 'calc(85%)' }} variant="outlined" label="Name (English)" size="small" id="name" />
+                        <TextField style={{ width: 'calc(85%)' }} variant="outlined" label="Name (English)" size="small" id="name" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(3%)' }}>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="INV date" size="small" id="invDate" />
+                        <TextField variant="outlined" label="INV date" size="small" id="invDate" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Received date" size="small" id="receivedDate" />
+                        <TextField variant="outlined" label="Received date" size="small" id="receivedDate" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="INV No." size="small" id="invNo" />
+                        <TextField variant="outlined" label="INV No." size="small" id="invNo" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
 
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="CC" size="small" id="cc" />
+                        <TextField variant="outlined" label="CC" size="small" id="cc" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
 
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(2%)' }}>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Qty." size="small" id="qty" />
+                        <TextField variant="outlined" label="Qty." size="small" id="qty" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Ex.Rate" size="small" id="exRate" />
+                        <TextField variant="outlined" label="Ex.Rate" size="small" id="exRate" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Cur" size="small" id="cur" />
+                        <TextField variant="outlined" label="Cur" size="small" id="cur" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Per unit (JPY/USD)" size="small" id="perUnit" />
+                        <TextField variant="outlined" label="Per unit (JPY/USD)" size="small" id="perUnit" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(2%)' }}>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Total (JPY/USD)" size="small" id="totalJpy" />
+                        <TextField variant="outlined" label="Total (JPY/USD)" size="small" id="totalJpy" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Total (THB)" size="small" id="totalThb" />
+                        <TextField variant="outlined" label="Total (THB)" size="small" id="totalThb" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Average freight (JPY/USD)" size="small" id="averageFreight" />
+                        <TextField variant="outlined" label="Average freight (JPY/USD)" size="small" id="averageFreight" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Avage insurance (JPY/USD)" size="small" id="averageInsurance" />
+                        <TextField variant="outlined" label="Avage insurance (JPY/USD)" size="small" id="averageInsurance" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(2%)' }}>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Grand total (JPY/USD)" size="small" id="totalJpy_1" />
+                        <TextField variant="outlined" label="Grand total (JPY/USD)" size="small" id="totalJpy_1" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Grand total (THB)" size="small" id="totalThb_1" />
+                        <TextField variant="outlined" label="Grand total (THB)" size="small" id="totalThb_1" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Per unit (THB)" size="small" id="perUnitThb" />
+                        <TextField variant="outlined" label="Per unit (THB)" size="small" id="perUnitThb" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Total of CIP (THB)" size="small" id="totalOfCip" />
+                        <TextField variant="outlined" label="Total of CIP (THB)" size="small" id="totalOfCip" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={0} style={{ marginTop: 'calc(2%)' }}>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Budget code" size="small" id="budgetCode" />
+                        <TextField variant="outlined" label="Budget code" size="small" id="budgetCode" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="PR.DIE/JIG" size="small" id="prDieJig" />
+                        <TextField variant="outlined" label="PR.DIE/JIG" size="small" id="prDieJig" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Model" size="small" id="model" />
+                        <TextField variant="outlined" label="Model" size="small" id="model" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Part No./DIE No." size="small" id="partNoDieNo" />
+                        <TextField variant="outlined" label="Part No./DIE No." size="small" id="partNoDieNo" disabled={this.state.disable} InputLabelProps={{ shrink: true }} />
                     </Grid>
                 </Grid>
+                {(this.state.disable === false) ?
+                    <>
+                        <Grid container style={{ marginTop: 'calc(2%)' }}>
+                            <Grid item xs={12} style={{ textAlign: 'center' }}>
+                                <Tooltip title="Expand user confirm">
+                                    <ArrowDropDown style={{ color: '#000000', width: '60px', height: '60px', cursor: 'pointer' }} onClick={this.userConfirmData} />
+                                </Tooltip>
+
+                            </Grid>
+                        </Grid>
+
+                        <Grid container>
+                            {this.state.userConfirmData}
+                        </Grid></> : ''}
 
             </>
         );

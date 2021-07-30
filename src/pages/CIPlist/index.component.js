@@ -2,7 +2,7 @@
 import React, { Component, } from 'react';
 
 import { Grid, TextField, Button, Card } from '@material-ui/core';
-import { app_jsonInstance, blob_response } from '../../configurations/instance';
+import { app_jsonInstance, blob_response, none_headersInstance } from '../../configurations/instance';
 
 import { reload } from '../../middleware/index';
 import Error from '../../components/errorBar/index.component';
@@ -12,6 +12,8 @@ import { DataGrid } from '@material-ui/data-grid';
 import DeptInput from './deptInput.component';
 
 import EditCIP from './edit.component';
+
+import SuccessBar from '../../components/successBar/index.component';
 
 class CIPlist extends Component {
     constructor() {
@@ -28,6 +30,7 @@ class CIPlist extends Component {
             error: false,
             message: 'Error',
             edit: false,
+            success: false,
         };
         this.getData = this.getData.bind(this);
         this.close = this.close.bind(this);
@@ -38,6 +41,7 @@ class CIPlist extends Component {
         this.download = this.download.bind(this);
         this.rowClicked = this.rowClicked.bind(this);
         this.openEdit = this.openEdit.bind(this);
+        this.delete = this.delete.bind(this)
     }
 
     componentDidMount() {
@@ -48,9 +52,9 @@ class CIPlist extends Component {
         this.setState({ deptInput: false, edit: false, })
         this.getData();
     }
-    openEdit() {
+    async openEdit() {
         if (this.state.dataSelected.length === 1) {
-            this.setState({ edit: true });
+            await this.setState({ edit: true });
         } else {
             this.setState({ error: true, message: 'Please select CIP for edit 1 record.' });
             setTimeout(() => {
@@ -76,10 +80,7 @@ class CIPlist extends Component {
         // }, 1000);
     }
     async onSelectionModelChange(rows) {
-
-        console.log('onSelectionModelChange: ', rows);
-        // const input = document.getElementById('input');
-        this.setState({
+        await this.setState({
             dataSelected: rows.selectionModel
         });
 
@@ -158,7 +159,6 @@ class CIPlist extends Component {
     async getData() {
         try {
             const response = await app_jsonInstance().get(`/cip/list`);
-
             this.setState({ data: response.data.data, all: response.data.data })
         } catch (error) {
             console.log(error.stack);
@@ -197,6 +197,28 @@ class CIPlist extends Component {
             console.log(err.stack);
         }
     }
+    async delete() {
+        try {
+            if (this.state.dataSelected.length !== 1) {
+                this.setState({ error: true, message: 'Please select 1 record to delete.'});
+                setTimeout(() => {
+                    this.setState({ error: false, })
+                }, 3000);
+                return;
+            }
+
+            const response = await none_headersInstance().delete(`/cip/${this.state.dataSelected[0]}`);
+
+            this.setState({ success: true, message: response.data.message });
+
+            setTimeout(() => {
+                this.setState({ success: false, });
+                this.getData();
+            }, 3000);
+        } catch (err) {
+            console.log(err);
+        }
+    }
     render() {
         let deptInput;
 
@@ -210,6 +232,11 @@ class CIPlist extends Component {
         let edit;
         if (this.state.edit === true) {
             edit = <EditCIP close={this.close} id={this.state.dataSelected[0]} />
+        }
+
+        let success;
+        if (this.state.success === true) {
+            success = <SuccessBar message={this.state.message} />
         }
         const columns = [
             {
@@ -242,9 +269,9 @@ class CIPlist extends Component {
                 }
             },
             {
-                field: 'totalThb', headerName: 'Total (THB)', width: 120, renderCell: (params) => {
+                field: 'totalOfCip', headerName: 'Total (THB)', width: 120, renderCell: (params) => {
                     if (params.row.status === 'reject') {
-                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.totalThb}</div>
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.totalOfCip}</div>
                     }
                 }
             },
@@ -258,19 +285,21 @@ class CIPlist extends Component {
         ];
         return (
             <>
-                {deptInput}{error}{edit}
+                {deptInput}{error}{edit}{success}
                 {this.state.hiddenInput}
                 <Grid container spacing={1}>
                     <Grid item xs={12}>
-                        <Card elevation={1} variant="outlined" style={{ padding: '5px', textAlign: 'center' }}>
+                        <Card elevation={1} variant="outlined" style={{ padding: '10px', textAlign: 'center' }}>
                             CIP List
                         </Card>
                     </Grid>
                 </Grid>
                 <Grid container spacing={0} style={{ marginTop: 'calc(1%)', textAlign: 'center' }}>
                     <Grid item xs={12} style={{ textAlign: 'right' }}>
-                        <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(1%)' }} onClick={this.download}> Download </Button>
-                        <Button variant="outlined" id="edit" style={{ backgroundColor: '#FF9800', color: 'aliceblue', }} onClick={this.openEdit}> Edit </Button>
+                        <Button variant="contained" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(1%)' }} onClick={this.download}> Download </Button>
+                        <Button variant="contained" id="edit" style={{ backgroundColor: '#FF9800', color: 'aliceblue', }} onClick={this.openEdit}> Edit </Button>
+
+                        <Button variant="text" id="edit" style={{ backgroundColor: '#e91e63', color: 'aliceblue', marginLeft: 'calc(5%)'}} onClick={this.delete}> Delete </Button>
                     </Grid>
                 </Grid>
                 <Grid container spacing={1}>

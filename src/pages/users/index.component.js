@@ -41,11 +41,11 @@ export default class Users extends Component {
     }
     async create(data) {
         try {
-            console.log('create: ', data);
             const body = {
                 empNo: data.empNo,
                 permission: data.deptCode,
                 action: data.action,
+                dept: data.deptName
             }
             await app_jsonInstance().post(`/user/manage/create`, body);
             this.rowData();
@@ -94,7 +94,7 @@ export default class Users extends Component {
                     columns={[
                         { field: 'empNo', title: 'Emp No.', align: 'center', editable: 'always', },
                         { field: 'name', title: 'Name', align: 'center', editable: 'never' },
-                        { field: 'deptName', title: 'Dept.', align: 'center', editable: 'never' },
+                        { field: 'deptName', title: 'Dept.', align: 'center', editable: 'onAdd' },
                         { field: 'deptCode', title: 'Dept action', align: 'center', editable: 'always' },
                         {
                             field: 'action', title: 'action', align: 'center', editable: 'always',
@@ -110,12 +110,12 @@ export default class Users extends Component {
                         },
                     ]}
                     icons={{
-                        Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-                        Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+                        Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} color="primary" />),
+                        Check: forwardRef((props, ref) => <Check {...props} ref={ref} style={{ color: '#3f51b5' }} />),
                         Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-                        Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+                        Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} color="secondary" />),
                         DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-                        Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+                        Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} style={{ color: '#4caf50' }} />),
                         Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
                         FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
                         LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
