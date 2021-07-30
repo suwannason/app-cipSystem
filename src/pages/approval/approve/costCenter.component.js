@@ -71,6 +71,7 @@ class Approve extends Component {
             }, 3000);
             return;
         }
+        console.log(this.state.dataSelected);
     }
     async check() {
         try {
