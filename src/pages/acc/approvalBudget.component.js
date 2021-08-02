@@ -124,8 +124,8 @@ class ApprovalBudget extends Component {
         const response = await app_jsonInstance().put(`/acc/approve/diff`, body);
         this.setState({ message: response.data.message, success: true, loading: false, });
         setTimeout(() => {
-            this.setState({ success: false, });
-            this.getData();
+            // this.setState({ success: false, });
+            reload();
         }, 3500);
 
     }

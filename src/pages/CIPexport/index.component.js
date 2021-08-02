@@ -5,6 +5,8 @@ import { Grid, FormHelperText, NativeSelect, InputLabel, FormControl, Button, Ca
 
 import { DataGrid } from '@material-ui/data-grid';
 import { app_jsonInstance } from '../../configurations/instance';
+import ErrorBar from '../../components/errorBar/index.component';
+
 export default class ExportProplus extends Component {
 
     constructor() {
@@ -14,9 +16,15 @@ export default class ExportProplus extends Component {
             selectValue: 'none',
             rowData: [],
             loading: false,
+            success: false,
+            message: '',
+            error: false,
+            dataSelected: [],
         };
         this.selectChange = this.selectChange.bind(this);
         this.search = this.search.bind(this);
+        this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
+        this.exportClick = this.exportClick.bind(this);
     }
     selectChange(event) {
         this.setState({ selectValue: event.target.value })
@@ -24,11 +32,15 @@ export default class ExportProplus extends Component {
     async search() {
         try {
             if (this.state.selectValue === 'none') {
+                this.setState({ error: true, message: 'Please select work type for search.' });
+                setTimeout(() => {
+                    this.setState({ error: false, })
+                }, 3000);
                 return;
             }
 
             this.setState({ loading: true, })
-            const response = await app_jsonInstance().post(`/export`, { workType: this.state.selectValue });
+            const response = await app_jsonInstance().post(`/export/finished`, { workType: this.state.selectValue });
 
             this.setState({ loading: false, rowData: response.data.data });
 
@@ -36,13 +48,33 @@ export default class ExportProplus extends Component {
             console.log(err.stack);
         }
     }
+    onSelectionModelChange(rows) {
+        this.setState({
+            dataSelected: rows.selectionModel,
+        });
+
+    }
+    exportClick() {
+        const body = {
+            id: this.state.dataSelected,
+            type: this.state.selectValue
+        };
+
+        console.log('Export: ', body);
+    }
     rowClicked() {
         
     }
     render() {
+        let error;
+
+        if (this.state.error === true) {
+            error = <ErrorBar message={this.state.message} />
+        }
         return (
             <>
                 <Grid container>
+                    {error}
                     <Grid item xs={12}>
                         <Card variant="outlined" style={{ padding: '10px' }}>
                             Export csv data
@@ -71,7 +103,7 @@ export default class ExportProplus extends Component {
                             <Button variant="outlined" size="medium" style={{ backgroundColor: '#2196f3', color: 'aliceblue' }} onClick={this.search}>Search</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant="outlined" size="medium" style={{ backgroundColor: '#009688', color: 'aliceblue' }}>Exports</Button>
+                            <Button variant="outlined" size="medium" style={{ backgroundColor: '#009688', color: 'aliceblue' }} onClick={this.exportClick}>Exports</Button>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -93,6 +125,7 @@ export default class ExportProplus extends Component {
                                 loading={this.state.loading}
                                 disableSelectionOnClick={true}
                                 checkboxSelection={true}
+                                onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
                                 pageSize={10}
                             />
                         </div>
