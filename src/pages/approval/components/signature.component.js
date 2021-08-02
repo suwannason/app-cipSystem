@@ -66,18 +66,27 @@ export default class Signature extends Component {
             <Grid container spacing={0} style={{ marginTop: 'calc(3%)', }}>
                 <Grid item xs={6}></Grid>
                 <Grid item xs={6}>
-                    <Card variant="outlined" style={{ padding: '5px 0px 10px 0px', borderColor: '#2196f3', borderWidth: '2px' }}>
+                    <Card variant="outlined" style={{ borderColor: 'rgb(16 70 6)', borderWidth: '2px' }}>
 
                         <Grid container spacing={0}>
                             <Grid item xs={this.state.gridItem} style={{ borderRightStyle: 'groove', textAlign: 'center' }}>
+                            <Grid item xs={12} style={{ padding: '2px', borderBottom: 'red', borderBottomStyle: 'inset', borderColor: 'rgb(16 70 6)' }}>
+                                    Prepare
+                                </Grid>
                                 {this.state.prepare} <br /> {this.props.approval.prepare.date}
                             </Grid>
 
 
                             <Grid item xs={this.state.gridItem} style={{ borderRightStyle: 'groove', textAlign: 'center' }}>
+                            <Grid item xs={12} style={{ padding: '2px', borderBottom: 'red', borderBottomStyle: 'inset', borderColor: 'rgb(16 70 6)' }}>
+                                    Check
+                                </Grid>
                                 {this.state.check} <br /> {this.props.approval.check.date}
                             </Grid>
                             <Grid item xs={this.state.gridItem} style={{ textAlign: 'center' }}>
+                                <Grid item xs={12} style={{ padding: '2px', borderBottom: 'red', borderBottomStyle: 'inset', borderColor: 'rgb(16 70 6)' }}>
+                                    Approve
+                                </Grid>
                                 {this.state.approve} <br /> {this.props.approval.approve.date}
                             </Grid>
                         </Grid>

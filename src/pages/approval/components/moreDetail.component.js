@@ -210,7 +210,20 @@ class MoreDetail extends Component {
 
                     {/* CONST CENTER DATA */}
                     <Card style={{ padding: 'calc(1%)', marginTop: 'calc(2%)', boxShadow: '#2196f3 1px 0px 12px 0px' }} variant="outlined">
-                    <Card variant="outlined" style={{ padding: '5px', display: 'inline-block',boxShadow: '-1px 0px 13px 0px #009688' }}> User confirm </Card>
+
+                        <Grid container spacing>
+                            <Grid item xs={2}>
+                                <Card variant="outlined" style={{ padding: '5px', display: 'inline-block', boxShadow: '-1px 0px 13px 0px #009688' }}> User confirm </Card>
+                            </Grid>
+                            <Grid item xs={8}></Grid>
+                            <Grid item xs={2}>
+                                {(this.state.db?.data.commend !== null) ? <Card variant="outlined" style={{ padding: '5px', color: 'red' }}>
+                                    {this.state.db?.data?.commend}
+                                </Card> : ''}
+                            </Grid>
+                        </Grid>
+
+
                         <Grid container spacing={0}>
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">

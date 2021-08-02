@@ -9,6 +9,7 @@ import ErrorBar from '../../../components/errorBar/index.component';
 import Preview from '../components/moreDetail.component';
 import Loading from '../../../components/loading/index.component';
 import Success from '../../../components/successBar/index.component';
+import TextInput from '../../../components/SingleTexfield/index.component';
 
 class Approve extends Component {
     constructor() {
@@ -26,6 +27,7 @@ class Approve extends Component {
             message: 'Have some error.',
             rowclick: null,
             headerMessage: '...',
+            textInput: false,
         };
         this.openSetroute = this.openSetroute.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
@@ -35,6 +37,7 @@ class Approve extends Component {
         this.close = this.close.bind(this);
         this.uploadApprove = this.uploadApprove.bind(this);
         this.download = this.download.bind(this);
+        this.openTextInput = this.openTextInput.bind(this);
     }
 
     componentDidMount() {
@@ -63,15 +66,39 @@ class Approve extends Component {
             }
         }
     }
-    reject() {
+    async reject(text) {
         if (this.state.dataSelected.length === 0) {
             this.setState({ error: true, message: 'Please select CIP to reject.' })
+            setTimeout(() => {
+                this.setState({ error: false, });
+            }, 3000);
+            return;
+        }
+        const body = {
+            id: this.state.dataSelected,
+            commend: text,
+        };
+        try {
+            this.setState({ textInput: false, });
+            const response = await app_jsonInstance().post(`/cip/reject/user`, body);
+            this.setState({ success: true, message: response.data.message });
+            this.setState({ success: false, });
+            this.getData();
+        } catch (err) {
+            console.log(err.stack);
+        }
+
+    }
+    openTextInput() {
+        if (this.state.dataSelected.length === 0) {
+            this.setState({ error: true, message: 'Please select CIP to reject.' });
+
             setTimeout(() => {
                 this.setState({ error: false, })
             }, 3000);
             return;
         }
-        console.log(this.state.dataSelected);
+        this.setState({ textInput: true, })
     }
     async check() {
         try {
@@ -86,7 +113,7 @@ class Approve extends Component {
             const body = {
                 id: this.state.dataSelected,
             };
-    
+
             const response = await app_jsonInstance().put(`/approval/approve/costCenter`, body);
             this.setState({ message: response.data.message, success: true, loading: false, });
             setTimeout(() => {
@@ -115,7 +142,7 @@ class Approve extends Component {
                 });
                 body.id = id;
             } else {
-                body.id =  this.state.dataSelected;
+                body.id = this.state.dataSelected;
             }
             const response = await blob_response().patch(`/approval/download`, body);
 
@@ -170,20 +197,46 @@ class Approve extends Component {
         }
     }
     close() {
-        this.setState({ preview: false, })
+        this.setState({ preview: false, textInput: false, })
     }
     preview(data) {
         this.setState({ preview: true, rowclick: data.id })
     }
     render() {
         const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            {
+                field: 'cipNo', headerName: 'CIP No.', width: 100, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cipNo}</div>
+                    }
+                }
+            },
+            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95, renderCell: (params) => {
+                if (params.row.commend !== null) {
+                    return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.subCipNo}</div>
+                }
+            } },
             // { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 375, },
-            { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalOfCip', headerName: 'Total (THB)', width: 120 },
-            { field: 'cc', headerName: 'CC', width: 80 },
+            { field: 'name', headerName: 'Name', width: 375, renderCell: (params) => {
+                if (params.row.commend !== null) {
+                    return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.name}</div>
+                }
+            } },
+            { field: 'qty', headerName: 'Qty.', width: 80, renderCell: (params) => {
+                if (params.row.commend !== null) {
+                    return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.qty}</div>
+                }
+            } },
+            { field: 'totalOfCip', headerName: 'Total (THB)', width: 120, renderCell: (params) => {
+                if (params.row.commend !== null) {
+                    return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.totalOfCip}</div>
+                }
+            } },
+            { field: 'cc', headerName: 'CC', width: 80, renderCell: (params) => {
+                if (params.row.commend !== null) {
+                    return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cc}</div>
+                }
+            } },
         ];
         let error;
         if (this.state.error === true) {
@@ -200,17 +253,21 @@ class Approve extends Component {
         if (this.state.success === true) {
             success = <Success message={this.state.message} />
         }
+        let textInput;
+        if (this.state.textInput === true) {
+            textInput = <TextInput close={this.close} submit={this.reject} />
+        }
         return (
             <>
-                {error}{preview}{loading}{success}
+                {error}{preview}{loading}{success}{textInput}
 
                 <Grid container spacing={0}>
                     <Grid item xs={12} style={{ marginBottom: 'calc(2%)' }}>
                         {this.state.headerMessage}
                     </Grid>
-                    
+
                     <Grid item xs={9}>
-                    <input type="file" id="prepare-upload" hidden onChange={this.uploadApprove} />
+                        <input type="file" id="prepare-upload" hidden onChange={this.uploadApprove} />
                         <Button variant="outlined" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(2%)' }} onClick={this.download}> Download </Button>
                         {(this.state.headerMessage.indexOf('prepare') !== -1)
                             ?
@@ -221,7 +278,7 @@ class Approve extends Component {
                             <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: 'rgb(128 214 145)', color: 'aliceblue' }} onClick={this.check}>
                                 Approve
                             </Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.reject}>
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.openTextInput}>
                                 reject
                             </Button>
                         </Card>

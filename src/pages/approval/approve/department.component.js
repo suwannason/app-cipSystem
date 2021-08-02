@@ -195,13 +195,49 @@ class Approve extends Component {
     }
     render() {
         const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 100, },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
+            {
+                field: 'cipNo', headerName: 'CIP No.', width: 100, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cipNo}</div>
+                    }
+                }
+            },
+            {
+                field: 'subCipNo', headerName: 'Sub CIP No.', width: 95, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.subCipNo}</div>
+                    }
+                }
+            },
             // { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 375, },
-            { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalOfCip', headerName: 'Total (THB)', width: 120 },
-            { field: 'cc', headerName: 'CC', width: 80 },
+            {
+                field: 'name', headerName: 'Name', width: 375, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.name}</div>
+                    }
+                }
+            },
+            {
+                field: 'qty', headerName: 'Qty.', width: 80, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.qty}</div>
+                    }
+                }
+            },
+            {
+                field: 'totalOfCip', headerName: 'Total (THB)', width: 120, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.totalOfCip}</div>
+                    }
+                }
+            },
+            {
+                field: 'cc', headerName: 'CC', width: 80, renderCell: (params) => {
+                    if (params.row.commend !== null) {
+                        return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cc}</div>
+                    }
+                }
+            },
         ];
         let error;
         if (this.state.error === true) {
