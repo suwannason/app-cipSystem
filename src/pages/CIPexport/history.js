@@ -25,11 +25,40 @@ export default class ExportHistory extends Component {
         this.selectChange = this.selectChange.bind(this);
         this.rowData = this.rowData.bind(this);
         this.nextPage = this.nextPage.bind(this);
+        this.exportClick = this.exportClick.bind(this);
     }
     selectChange(event) {
         this.setState({ selectValue: event.target.value })
     }
-    
+    async exportClick() {
+        try {
+            if (this.state.dataSelected.length === 0) {
+                this.setState({ error: true, message: 'Please select CIP to export.' });
+                setTimeout(() => {
+                    this.setState({ error: false, })
+                }, 3000);
+                return;
+            }
+            const body = {
+                id: this.state.dataSelected,
+                workType: this.state.selectValue
+            };
+            this.setState({ exportLoading: true, message: 'Exporting...' });
+
+            const response = await app_jsonInstance().post(`/export/wrtiing`, body);
+            this.setState({ success: true, message: response.data.message, exportLoading: false });
+            setTimeout(() => {
+                this.setState({ success: false, });
+                this.search();
+            }, 3000);
+        } catch (err) {
+            this.setState({ error: true, message: err.response.data.message, exportLoading: false });
+
+            setTimeout(() => {
+                this.setState({ error: false, })
+            }, 3000);
+        }
+    }
     async rowData() {
         try {
             if (this.state.selectValue === 'none') {
@@ -57,7 +86,7 @@ export default class ExportHistory extends Component {
             await this.setState({ page: this.state.page + 1});
 
             const body = {
-                workType: "",
+                workType: this.state.selectValue,
                 page: this.state.page,
                 perPage: this.state.perPage,
             };
@@ -104,7 +133,7 @@ export default class ExportHistory extends Component {
                         <Button variant="outlined" size="medium" style={{ backgroundColor: '#2196f3', color: 'aliceblue' }} onClick={this.rowData}>Search</Button>
                     </Grid>
                     <Grid item xs={2}>
-                        <Button variant="outlined" size="medium" style={{ backgroundColor: '#009688', color: 'aliceblue' }}>Exports</Button>
+                        <Button variant="outlined" size="medium" style={{ backgroundColor: '#009688', color: 'aliceblue' }} onClick={this.exportClick}>Exports</Button>
                     </Grid>
                 </Grid>
 
