@@ -5,7 +5,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-class ErrorBar extends React.Component {
+class Loading extends React.Component {
 
     constructor(props) {
         super(props);
@@ -41,4 +41,4 @@ class ErrorBar extends React.Component {
     }
 }
 
-export default ErrorBar;
+export default Loading;

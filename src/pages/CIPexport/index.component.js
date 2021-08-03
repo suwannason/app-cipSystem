@@ -7,6 +7,9 @@ import { DataGrid } from '@material-ui/data-grid';
 import { app_jsonInstance } from '../../configurations/instance';
 import ErrorBar from '../../components/errorBar/index.component';
 
+import Loading from '../../components/loading/index.component';
+import SuccessBar from '../../components/successBar/index.component';
+
 export default class ExportProplus extends Component {
 
     constructor() {
@@ -20,6 +23,7 @@ export default class ExportProplus extends Component {
             message: '',
             error: false,
             dataSelected: [],
+            exportLoading: false,
         };
         this.selectChange = this.selectChange.bind(this);
         this.search = this.search.bind(this);
@@ -54,16 +58,34 @@ export default class ExportProplus extends Component {
         });
 
     }
-    exportClick() {
-        const body = {
-            id: this.state.dataSelected,
-            type: this.state.selectValue
-        };
+    async exportClick() {
+        try {
+            if (this.state.dataSelected.length === 0) {
+                this.setState({ error: true, message: 'Please select CIP to export.' });
+                setTimeout(() => {
+                    this.setState({ error: false, })
+                }, 3000);
+                return;
+            }
+            const body = {
+                id: this.state.dataSelected,
+                workType: this.state.selectValue
+            };
+            this.setState({ exportLoading: true, message: 'Exporting...' });
 
-        console.log('Export: ', body);
-    }
-    rowClicked() {
-        
+            const response = await app_jsonInstance().post(`/export/wrtiing`, body);
+            this.setState({ success: true, message: response.data.message, exportLoading: false });
+            setTimeout(() => {
+                this.setState({ success: false, });
+                this.search();
+            }, 3000);
+        } catch (err) {
+            this.setState({ error: true, message: err.response.data.message, exportLoading: false });
+
+            setTimeout(() => {
+                this.setState({ error: false, })
+            }, 3000);
+        }
     }
     render() {
         let error;
@@ -71,17 +93,25 @@ export default class ExportProplus extends Component {
         if (this.state.error === true) {
             error = <ErrorBar message={this.state.message} />
         }
+        let loading;
+        if (this.state.exportLoading === true) {
+            loading = <Loading message={this.state.message} />
+        }
+        let success;
+        if (this.state.success === true) {
+            success = <SuccessBar message={this.state.message} />
+        }
         return (
             <>
                 <Grid container>
-                    {error}
+                    {error}{loading}{success}
                     <Grid item xs={12}>
                         <Card variant="outlined" style={{ padding: '10px' }}>
                             Export csv data
                         </Card>
                     </Grid>
 
-                    <Grid container style={{ marginTop: 'calc(3%)'}}>
+                    <Grid container style={{ marginTop: 'calc(3%)' }}>
                         <Grid item xs={3}>
                             <FormControl>
                                 <InputLabel htmlFor="uncontrolled-native">Work type</InputLabel>
@@ -119,7 +149,7 @@ export default class ExportProplus extends Component {
                                     { field: 'vendor', headerName: 'Vendor', width: 130 },
                                     { field: 'name', headerName: 'Name', width: 200, },
                                     { field: 'qty', headerName: 'Qty.', width: 80 },
-                                    { field: 'totalThb', headerName: 'Total (THB)', width: 130 },
+                                    { field: 'totalOfCip', headerName: 'Total (THB)', width: 130 },
                                     { field: 'cc', headerName: 'CC', width: 80 },
                                 ]}
                                 loading={this.state.loading}
