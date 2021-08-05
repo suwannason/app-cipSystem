@@ -12,7 +12,7 @@ import { none_headersInstance, app_jsonInstance } from '../../configurations/ins
 
 import SuccessBar from '../../components/successBar/index.component';
 import ErrorBar from '../../components/errorBar/index.component';
-
+// import { reload } from '../../middleware/index';
 // PROPS CONTEXT
 
 // close=function
@@ -74,6 +74,7 @@ export default class EditCIP extends Component {
             setTimeout(() => {
                 this.setState({ success: false, })
                 this.handleClose();
+                // reload();
             }, 3000);
 
         } catch (err) {

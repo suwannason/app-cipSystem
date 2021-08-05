@@ -64,8 +64,7 @@ export default class Signature extends Component {
     render() {
         return (
             <Grid container spacing={0} style={{ marginTop: 'calc(3%)', }}>
-                <Grid item xs={6}></Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12}>
                     <Card variant="outlined" style={{ borderColor: 'rgb(16 70 6)', borderWidth: '2px' }}>
 
                         <Grid container spacing={0}>

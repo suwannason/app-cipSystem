@@ -196,15 +196,6 @@ class MoreDetail extends Component {
                                 <strong>AVERAGE INSURANCE (JPY/USD): </strong> {this.state.db?.data?.averageInsurance || "-"}
                             </Grid>
                         </Grid>
-                        {(this.state.approval.check1 !== null) ?
-                            <Signature
-                                approval={
-                                    {
-                                        prepare: { empNo: this.state.approval.prepare1?.empNo, date: this.state.approval.prepare1?.date },
-                                        check: { empNo: this.state.approval.check1?.empNo, date: this.state.approval.check1?.date },
-                                        approve: { empNo: this.state.approval.approve1?.empNo, date: this.state.approval.approve1?.date },
-                                    }}
-                            /> : ''}
                     </Card>
 
 
@@ -323,20 +314,42 @@ class MoreDetail extends Component {
                                 </Card>
                             </Grid>
                         </Grid>
-                        {(this.state.approval.check2 !== null) ?
-                            <Signature
-                                approval={
-                                    {
-                                        prepare: { empNo: this.state.approval.prepare2?.empNo, date: this.state.approval.prepare2?.date },
-                                        check: { empNo: this.state.approval.check2?.empNo, date: this.state.approval.check2?.date },
-                                        approve: { empNo: this.state.approval.approve2?.empNo, date: this.state.approval.approve2?.date },
-                                    }}
-                            /> : ''}
                     </Card>
 
 
                     {/* SIGNATURE  */}
+                    <Grid container style={{ marginTop: 'calc(2%)' }}>
+                        <Grid item xs={5}>
+                            <p style={{ textAlign: 'center' }}>Requester confirm</p>
+                            {(this.state.approval.check1 !== null) ?
+                                <Signature
+                                    approval={
+                                        {
+                                            prepare: { empNo: this.state.approval.prepare1?.empNo, date: this.state.approval.prepare1?.date },
+                                            check: { empNo: this.state.approval.check1?.empNo, date: this.state.approval.check1?.date },
+                                            approve: { empNo: this.state.approval.approve1?.empNo, date: this.state.approval.approve1?.date },
+                                        }}
+                                /> : ''}
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={5}>
+                            {(this.state.approval.prepare2 !== null && this.state.approval.prepare2 !== undefined) ?
+                                <> <p style={{ textAlign: 'center' }}>User confirm</p>
+                                    <Signature
+                                        approval={
+                                            {
+                                                prepare: { empNo: this.state.approval.prepare2?.empNo, date: this.state.approval.prepare2?.date },
+                                                check: { empNo: this.state.approval.check2?.empNo, date: this.state.approval.check2?.date },
+                                                approve: { empNo: this.state.approval.approve2?.empNo, date: this.state.approval.approve2?.date },
+                                            }}
+                                    /></> : ''}
+                        </Grid>
+
+
+                    </Grid>
                 </DialogContent>
+
+
                 <DialogActions>
                     <Button color="primary" variant="contained" onClick={this.handleClose} style={{ backgroundColor: '#607d8b' }}>
                         Close

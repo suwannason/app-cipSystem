@@ -4,7 +4,7 @@ import React, { Component, } from 'react';
 import { Grid, FormHelperText, NativeSelect, InputLabel, FormControl, Button } from '@material-ui/core';
 
 import { DataGrid } from '@material-ui/data-grid';
-import { app_jsonInstance } from '../../configurations/instance';
+import { app_jsonInstance, blob_response } from '../../configurations/instance';
 import ErrorBar from '../../components/errorBar/index.component';
 
 import Loading from '../../components/loading/index.component';
@@ -26,6 +26,13 @@ export default class ExportHistory extends Component {
         this.rowData = this.rowData.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.exportClick = this.exportClick.bind(this);
+        this.onSelectionModelChange = this.onSelectionModelChange.bind(this)
+    }
+    onSelectionModelChange(rows) {
+        this.setState({
+            dataSelected: rows.selectionModel,
+        });
+
     }
     selectChange(event) {
         this.setState({ selectValue: event.target.value })
@@ -41,15 +48,34 @@ export default class ExportHistory extends Component {
             }
             const body = {
                 id: this.state.dataSelected,
-                workType: this.state.selectValue
+                // workType: this.state.selectValue
             };
             this.setState({ exportLoading: true, message: 'Exporting...' });
 
-            const response = await app_jsonInstance().post(`/export/wrtiing`, body);
-            this.setState({ success: true, message: response.data.message, exportLoading: false });
+            const response = await blob_response().patch(`/cip/download`, body);
+
+            if (window.navigator.msSaveBlob) //IE & Edge
+            { //msSaveBlob only available for IE & Edge
+                console.log("IE & Edge")
+                // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const blob = new File([response.data], "cost-center.xlsx")
+                window.navigator.msSaveBlob(blob, `CIP.xlsx`);
+            }
+            else //Chrome & FF
+            {
+                console.log("Chrome")
+                const url = window.URL.createObjectURL(new File([response.data], "cost-center.xlsx"));
+                // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `CIP.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+            }
+            this.setState({ success: true, message: 'Export excel success.', exportLoading: false });
             setTimeout(() => {
                 this.setState({ success: false, });
-                this.search();
+
             }, 3000);
         } catch (err) {
             this.setState({ error: true, message: err.response.data.message, exportLoading: false });
