@@ -39,7 +39,7 @@ export default class UserEdit extends Component {
         cipUpdate.costCenterOfUser = document.getElementById('costCenterOfUser').value;
         cipUpdate.fixAssetName = document.getElementById('fixAssetName').value;
         cipUpdate.fixedAssetCode = document.getElementById('fixedAssetCode').value;
-        cipUpdate.model = document.getElementById('model').value;
+        cipUpdate.model = document.getElementById('model_update').value;
         cipUpdate.newBFMorAddBFM = document.getElementById('newBFMorAddBFM').value;
         cipUpdate.partNumberDieNo = document.getElementById('partNumberDieNo').value;
         cipUpdate.planDate = document.getElementById('planDate').value;
@@ -75,7 +75,7 @@ export default class UserEdit extends Component {
             document.getElementById('costCenterOfUser').value = response.data.data.costCenterOfUser;
             document.getElementById('fixAssetName').value = response.data.data.fixAssetName;
             document.getElementById('fixedAssetCode').value = response.data.data.fixedAssetCode;
-            document.getElementById('model').value = response.data.data.model;
+            document.getElementById('model_update').value = response.data.data.model;
             document.getElementById('newBFMorAddBFM').value = response.data.data.newBFMorAddBFM;
             document.getElementById('partNumberDieNo').value = response.data.data.partNumberDieNo;
             document.getElementById('planDate').value = response.data.data.planDate;
@@ -147,7 +147,7 @@ export default class UserEdit extends Component {
                         <TextField variant="outlined" label="Process Die" size="small" id="processDie" InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
-                        <TextField variant="outlined" label="Model" size="small" id="model" InputLabelProps={{ shrink: true }} />
+                        <TextField variant="outlined" label="Model" size="small" id="model_update" InputLabelProps={{ shrink: true }} />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField variant="outlined" label="Cost center of user" size="small" id="costCenterOfUser" InputLabelProps={{ shrink: true }} />

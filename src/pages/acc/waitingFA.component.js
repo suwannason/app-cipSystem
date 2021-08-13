@@ -9,6 +9,7 @@ import ErrorBar from '../../components/errorBar/index.component';
 import Preview from '../approval/components/moreDetail.component';
 import Loading from '../../components/loading/index.component';
 import Success from '../../components/successBar/index.component';
+import SendBack from './sendBack.component';
 
 class WaitingFA extends Component {
     constructor() {
@@ -25,11 +26,12 @@ class WaitingFA extends Component {
             preview: false,
             message: 'Have some error.',
             rowclick: null,
+            openSendBack: true,
         };
         this.openSetroute = this.openSetroute.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
         this.check = this.check.bind(this);
-        this.reject = this.reject.bind(this);
+        this.sendBack = this.sendBack.bind(this);
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
     }
@@ -58,14 +60,16 @@ class WaitingFA extends Component {
             }
         }
     }
-    reject() {
-        if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to reject.'})
-            setTimeout(() => {
-                this.setState({ error: false, })
-            }, 3000);
-            return;
-        }
+    sendBack() {
+
+        this.setState({ openSendBack: true, })
+        // if (this.state.dataSelected.length === 0) {
+        //     this.setState({ error: true, message: 'Please select CIP to reject.'})
+        //     setTimeout(() => {
+        //         this.setState({ error: false, })
+        //     }, 3000);
+        //     return;
+        // }
     }
     async check() {
         this.setState({ message: 'Approving CIP.' });
@@ -97,7 +101,7 @@ class WaitingFA extends Component {
 
     }
     close() {
-        this.setState({ preview: false, })
+        this.setState({ preview: false, openSendBack: false, })
     }
     preview(data) {
         this.setState({ preview: true, rowclick: data.id })
@@ -128,21 +132,25 @@ class WaitingFA extends Component {
         if (this.state.success === true) {
             success = <Success message={this.state.message} />
         }
+        let sendBack;
+        if (this.state.openSendBack === true) {
+            sendBack = <SendBack close={this.close} />
+        }
         return (
             <>
-                {error}{preview}{loading}{success}
+                {error}{preview}{loading}{success}{sendBack}
 
                 <Grid container spacing={0}>
-                    <Grid item xs={9}>
+                    <Grid item xs={8}>
 
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
                             <Button variant="outlined" style={{ marginRight: 'calc(2%)', backgroundColor: '#4caf50', color: 'aliceblue' }} onClick={this.check}>
                                 Finish cip
                             </Button>
-                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.reject}>
-                                reject
+                            <Button variant="outlined" style={{ backgroundColor: '#f44336', color: 'aliceblue' }} onClick={this.sendBack}>
+                                Send back
                             </Button>
                         </Card>
                     </Grid>

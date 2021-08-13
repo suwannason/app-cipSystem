@@ -2,6 +2,7 @@
   "name": "application",
   "version": "0.1.0",
   "private": true,
+"homepage": "cip",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.24",
@@ -26,6 +27,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "uat": "../deploy.bat cptsvs52t",
+    "prod": "deploy.bat cptsvs531",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
