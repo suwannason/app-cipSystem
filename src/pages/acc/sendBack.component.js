@@ -9,6 +9,7 @@ import {
 
 import { app_jsonInstance } from '../../configurations/instance';
 
+import SuccessBar from '../../components/successBar/index.component';
 
 // PROPS CONTEXT
 
@@ -22,6 +23,8 @@ class SendBack extends Component {
         this.state = {
             open: false,
             selected: 'requester-prepare',
+            success: false,
+            message: '',
         };
         this.onBackingChange = this.onBackingChange.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -29,6 +32,7 @@ class SendBack extends Component {
     }
     componentDidMount() {
         this.setState({ open: true });
+        console.log(this.props);
     }
     onBackingChange(event) {
         this.setState({ selected: event.target.value })
@@ -36,11 +40,20 @@ class SendBack extends Component {
     async submitSendback() {
         try {
             const body = {
-                id: this.props.id
+                id: this.props.id,
+                commend: document.getElementById('sendBack_description').value,
+                toStep: this.state.selected
             };
 
+            // console.log(body);
             const response = await app_jsonInstance().post(`/acc/sendback`, body);
-            console.log(response.data);
+            this.setState({ success: true, message: response.data.message });
+
+            setTimeout(() => {
+                this.setState({ success: false });
+                this.handleClose();
+            }, 3000);
+            // console.log(response.data);
         } catch (err) {
             console.log(err.stack);
         }
@@ -54,9 +67,14 @@ class SendBack extends Component {
     }
 
     render() {
+        let success;
+        if (this.state.success === true) {
+            success = <SuccessBar message={this.state.message} />
+        }
         return (
             <>
                 <Dialog open={this.state.open} fullWidth>
+                    {success}
                     <DialogTitle style={{ backgroundColor: '#f55252', color: 'aliceblue' }}>Send back</DialogTitle>
                     <DialogContent>
                         <Grid container spacing>
@@ -77,12 +95,12 @@ class SendBack extends Component {
                             </Grid>
                             <Grid item xs={2}></Grid>
                             <Grid item xs={5}>
-                                <TextField label="description" variant="outlined" />
+                                <TextField label="description" variant="outlined" id="sendBack_description" />
                             </Grid>
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button variant="outlined" style={{ backgroundColor: '#009688', color: 'aliceblue' }}>send back</Button>
+                        <Button variant="outlined" style={{ backgroundColor: '#009688', color: 'aliceblue' }} onClick={this.submitSendback}>send back</Button>
                         <Button variant="outlined" style={{ backgroundColor: '#ff5722', color: 'aliceblue' }} onClick={this.handleClose}>close</Button>
                     </DialogActions>
                 </Dialog>

@@ -26,7 +26,7 @@ class WaitingFA extends Component {
             preview: false,
             message: 'Have some error.',
             rowclick: null,
-            openSendBack: true,
+            openSendBack: false,
         };
         this.openSetroute = this.openSetroute.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
@@ -48,7 +48,8 @@ class WaitingFA extends Component {
         try {
             const response = await app_jsonInstance().get(`/acc/finish`);
 
-            this.setState({ data: response.data.data,
+            this.setState({
+                data: response.data.data,
                 all: response.data.data
             });
         } catch (error) {
@@ -62,21 +63,21 @@ class WaitingFA extends Component {
     }
     sendBack() {
 
+        if (this.state.dataSelected.length === 0) {
+            this.setState({ error: true, message: 'Please select CIP to Send back.' })
+            setTimeout(() => {
+                this.setState({ error: false, })
+            }, 3000);
+            return;
+        }
         this.setState({ openSendBack: true, })
-        // if (this.state.dataSelected.length === 0) {
-        //     this.setState({ error: true, message: 'Please select CIP to reject.'})
-        //     setTimeout(() => {
-        //         this.setState({ error: false, })
-        //     }, 3000);
-        //     return;
-        // }
     }
     async check() {
         this.setState({ message: 'Approving CIP.' });
         if (this.state.dataSelected.length === 0) {
-            this.setState({ error: true, message: 'Please select CIP to check.'})
+            this.setState({ error: true, message: 'Please select CIP to check.' })
             setTimeout(() => {
-                this.setState({ error: false, loading: false,})
+                this.setState({ error: false, loading: false, })
             }, 3000);
             return;
         }
@@ -89,7 +90,7 @@ class WaitingFA extends Component {
         const response = await app_jsonInstance().put(`/acc/approve/finish`, body);
         this.setState({ message: response.data.message, success: true, loading: false, });
         setTimeout(() => {
-            this.setState({ success: false,});
+            this.setState({ success: false, });
             this.getData();
         }, 3500);
 
@@ -101,7 +102,8 @@ class WaitingFA extends Component {
 
     }
     close() {
-        this.setState({ preview: false, openSendBack: false, })
+        this.setState({ preview: false, openSendBack: false, });
+        this.getData();
     }
     preview(data) {
         this.setState({ preview: true, rowclick: data.id })
@@ -134,7 +136,7 @@ class WaitingFA extends Component {
         }
         let sendBack;
         if (this.state.openSendBack === true) {
-            sendBack = <SendBack close={this.close} />
+            sendBack = <SendBack close={this.close} id={this.state.dataSelected} />
         }
         return (
             <>
