@@ -7,6 +7,7 @@ import { reload } from '../../middleware/index';
 
 import { Card, Tabs, Tab } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
+import { PersonPin, People } from '@material-ui/icons';
 
 import HistoryRequester from './requester';
 import HistryUser from './user';
@@ -91,9 +92,10 @@ class CIPlist extends Component {
                         indicatorColor="primary"
                         textColor="primary"
                         centered
+                        selectionFollowsFocus
                     >
-                        <Tab label="Requester" />
-                        <Tab label="User" />
+                        <Tab label="Requester" icon={<PersonPin />} />
+                        <Tab label="User" icon={<People />} />
                     </Tabs>
                 </Card>
 

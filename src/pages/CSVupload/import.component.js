@@ -140,7 +140,7 @@ class Import extends Component {
                             }}
                         >
                             <option value={'Accounting'} disabled={this.state.accDisable}>Accounting</option>
-                            <option value={'User'}>User</option>
+                            <option value={'User'}>Requester</option>
                         </Select>
                     </FormControl>
                 </Grid>
