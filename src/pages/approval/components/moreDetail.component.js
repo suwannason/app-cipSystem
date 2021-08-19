@@ -285,6 +285,13 @@ class MoreDetail extends Component {
                         </Grid>
 
                         <Grid container spacing={0}>
+                            
+                        <Grid item xs={3}>
+                                <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>Part number Die No.: </strong> {this.state.db?.data?.cipUpdate?.partNumberDieNo || "-"}
+                                </Card>
+                            </Grid>
+
                             <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
                                     <strong>ให้ขึ้น Fix Asset  กี่ตัว: </strong> {this.state.db?.data?.cipUpdate?.upFixAsset || "-"}
@@ -295,7 +302,7 @@ class MoreDetail extends Component {
                                     <strong>New BFMor Add BFM: </strong> {this.state.db?.data?.cipUpdate?.newBFMorAddBFM || "-"}
                                 </Card>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={3}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
                                     <strong>Reason for delay: </strong> {this.state.db?.data?.cipUpdate?.reasonForDelay || "-"}
                                 </Card>
@@ -303,12 +310,17 @@ class MoreDetail extends Component {
                         </Grid>
 
                         <Grid container spacing={0}>
-                            <Grid item xs={5}>
-                                <Card style={{ padding: '5px' }} variant="outlined">
-                                    <strong>REMARK (Add CIP/BFM No.): </strong> {this.state.db?.data?.cipUpdate?.remark || "-"}
+                            <Grid item xs={3}>
+                            <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>Add CIP/BFM No.: </strong> {this.state.db?.data?.cipUpdate?.addCipBfmNo || "-"}
                                 </Card>
                             </Grid>
-                            <Grid item xs={7}>
+                            <Grid item xs={5}>
+                                <Card style={{ padding: '5px' }} variant="outlined">
+                                    <strong>Remark: </strong> {this.state.db?.data?.cipUpdate?.remark || "-"}
+                                </Card>
+                            </Grid>
+                            <Grid item xs={4}>
                                 <Card style={{ padding: '5px' }} variant="outlined">
                                     <strong>ITC BOI type: </strong> {this.state.db?.data?.cipUpdate?.boiType || "-"}
                                 </Card>

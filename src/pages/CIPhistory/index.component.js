@@ -1,132 +1,45 @@
 
 import React, { Component, } from 'react';
 
-import { Grid, TextField, Button, Card } from '@material-ui/core';
 import { app_jsonInstance, blob_response } from '../../configurations/instance';
 
 import { reload } from '../../middleware/index';
 
-import { DataGrid } from '@material-ui/data-grid';
+import { Card, Tabs, Tab } from '@material-ui/core';
+import SwipeableViews from 'react-swipeable-views';
+
+import HistoryRequester from './requester';
+import HistryUser from './user';
 
 class CIPlist extends Component {
     constructor() {
         super();
 
         this.state = {
-            idSelected: [],
-            data: [],
-            all: [],
             dataSelected: [],
-            cipNo: '',
-            name: '',
+            tabValue: 0,
+            requesterData: [],
+            userData: [],
         };
         this.getData = this.getData.bind(this);
-        this.close = this.close.bind(this);
-        this.openDeptinput = this.openDeptinput.bind(this);
-        this.cipNoChange = this.cipNoChange.bind(this);
-        this.nameChange = this.nameChange.bind(this);
-        this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
         this.download = this.download.bind(this);
+        this.handleTabChange = this.handleTabChange.bind(this)
     }
 
     componentDidMount() {
         this.getData();
     }
-
-    close() {
-        this.getData();
-    }
-    openDeptinput() {
-        const idOnSelect = [];
-        for (const item of this.state.dataSelected) {
-            idOnSelect.push(parseInt(item, 10))
-        }
-        this.setState({ deptInput: true, idSelected: idOnSelect, })
-        // }, 1000);
-    }
-    async onSelectionModelChange(rows) {
-
-        console.log('onSelectionModelChange: ', rows);
-        // const input = document.getElementById('input');
-        this.setState({
-            dataSelected: rows.selectionModel
-        });
-
-        const input = document.getElementById('input');
-        if (rows.selectionModel.length > 0) {
-            input.style.display = 'block'
-        } else {
-            input.style.display = 'none'
-        }
-
-    }
-    cipNoChange(event) {
-        this.setState({ cipNo: event.target.value });
-
-        if (event.target.value !== '') {
-            if (this.state.cipNo.length > event.target.value.length) {
-                this.setState({
-                    data: this.state.all.filter((item) => {
-
-                        return item.cipNo.indexOf(event.target.value) !== -1
-                    })
-                });
-            } else {
-                this.setState({
-                    data: this.state.data.filter((item) => {
-
-                        return item.cipNo.indexOf(event.target.value) !== -1
-                    })
-                });
-            }
-        } else {
-            this.setState({
-                data: this.state.all.filter((item) => {
-
-                    return item.cipNo.indexOf(event.target.value) !== -1
-                })
-            });
-        }
-    }
-    nameChange(event) {
-        this.setState({ name: event.target.value });
-
-        if (event.target.value !== '') {
-            if (this.state.cipNo !== '') {
-                if (event.target.value < this.state.name.length) {
-
-                    this.setState({
-                        data: this.state.all.filter((item) => {
-                            return item.cipNo.indexOf(this.state.cipNo) !== -1
-                        })
-                    });
-                } else {
-                    this.setState({
-                        data: this.state.data.filter((item) => {
-                            return item.name.indexOf(event.target.value) !== -1
-                        })
-                    });
-                }
-            } else {
-                this.setState({
-                    data: this.state.data.filter((item) => {
-                        return item.name.indexOf(event.target.value) !== -1
-                    })
-                })
-            }
-        } else {
-            this.setState({
-                data: this.state.all.filter((item) => {
-                    return item.cipNo.indexOf(this.state.cipNo) !== -1
-                })
-            })
-        }
-    }
+    
     async getData() {
         try {
             const response = await app_jsonInstance().get(`/cip/history`);
 
-            this.setState({ data: response.data.data, all: response.data.data })
+            this.setState({
+                requesterData: response.data.data.requester,
+                userData: response.data.data.user,
+            })
+            console.log(response.data);
+
         } catch (error) {
             console.log(error.stack);
 
@@ -164,54 +77,32 @@ class CIPlist extends Component {
             console.log(err.stack);
         }
     }
+    handleTabChange(event, value) {
+        this.setState({ tabValue: value })
+    }
     render() {
-        const columns = [
-            { field: 'cipNo', headerName: 'CIP No.', width: 100 },
-            { field: 'subCipNo', headerName: 'Sub CIP No.', width: 95 },
-            // { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 375, },
-            { field: 'qty', headerName: 'Qty.', width: 80 },
-            { field: 'totalThb', headerName: 'Total (THB)', width: 120 },
-            { field: 'cc', headerName: 'CC', width: 80 },
-        ];
+
         return (
             <>
-                {this.state.hiddenInput}
-                <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                        <Card elevation={1} variant="outlined" style={{ padding: '5px', textAlign: 'center' }}>
-                            CIP History
-                        </Card>
-                    </Grid>
-                </Grid>
+                <Card variant="outlined">
+                    <Tabs
+                        value={this.state.tabValue}
+                        onChange={this.handleTabChange}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        centered
+                    >
+                        <Tab label="Requester" />
+                        <Tab label="User" />
+                    </Tabs>
+                </Card>
 
-                <Grid container spacing={1}>
-                    <Grid item xs={3}>
-                        <TextField label="CIP No." onChange={this.cipNoChange} value={this.state.cipNo} />
-                    </Grid>
+                <SwipeableViews index={this.state.tabValue}>
 
-                    <Grid item xs={3}>
-                        <TextField label="Name" onChange={this.nameChange} value={this.state.name} />
-                    </Grid>
+                    <HistoryRequester data={this.state.requesterData} />
+                    <HistryUser data={this.state.userData} />
 
-                    <Grid item xs={6}>
-                        <Button variant="outlined" id="input" style={{ backgroundColor: '#82b1da', color: 'aliceblue', display: 'none' }} onClick={this.openDeptinput}> Input </Button>
-
-                    </Grid>
-                </Grid>
-
-                <div style={{ height: 600, width: '100%', marginTop: 'calc(1%)' }}>
-                    <DataGrid
-                        rows={this.state.data}
-                        columns={columns}
-                        pageSize={10}
-                        checkboxSelection
-                        // onRowSelected={(row) => this.selectionRow(row)}
-                        onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
-                        disableSelectionOnClick={true}
-                    />
-                </div>
-
+                </SwipeableViews>
             </>
         );
     }

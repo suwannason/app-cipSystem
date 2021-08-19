@@ -199,17 +199,12 @@ class CIPlist extends Component {
     }
     async delete() {
         try {
-            if (this.state.dataSelected.length !== 1) {
-                this.setState({ error: true, message: 'Please select 1 record to delete.'});
-                setTimeout(() => {
-                    this.setState({ error: false, })
-                }, 3000);
-                return;
+            const request = [];
+            for (const item of this.state.dataSelected) {
+                request.push(none_headersInstance().delete(`/cip/${item}`))
             }
-
-            const response = await none_headersInstance().delete(`/cip/${this.state.dataSelected[0]}`);
-
-            this.setState({ success: true, message: response.data.message });
+           await Promise.all(request);
+            this.setState({ success: true, message: 'Delete CIP success.' });
 
             setTimeout(() => {
                 this.setState({ success: false, });
