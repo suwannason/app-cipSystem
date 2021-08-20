@@ -4,7 +4,7 @@ import React, { Component, } from 'react';
 import { Grid, FormHelperText, NativeSelect, InputLabel, FormControl, Button } from '@material-ui/core';
 
 import { DataGrid } from '@material-ui/data-grid';
-import { app_jsonInstance, blob_response } from '../../configurations/instance';
+import { app_jsonInstance, blob_response, none_headersInstance } from '../../configurations/instance';
 import ErrorBar from '../../components/errorBar/index.component';
 
 import Loading from '../../components/loading/index.component';
@@ -19,20 +19,34 @@ export default class ExportHistory extends Component {
             selectValue: 'none',
             rowData: [],
             loading: false,
-            page: 1,
-            perPage: 11,
         };
         this.selectChange = this.selectChange.bind(this);
         this.rowData = this.rowData.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.exportClick = this.exportClick.bind(this);
-        this.onSelectionModelChange = this.onSelectionModelChange.bind(this)
+        this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
+        this.getAllData = this.getAllData.bind(this)
     }
     onSelectionModelChange(rows) {
         this.setState({
             dataSelected: rows.selectionModel,
         });
+    }
+    componentDidMount() {
+        this.getAllData();
+    }
+    
+    async getAllData() {
+        try {
+            this.setState({ loading: true, });
+            const response = await none_headersInstance().get(`/export/history`);
+            
+            this.setState({ loading: false, });
 
+            this.setState({ rowData: response.data.data });
+        } catch (err) {
+            console.log(err.stack)
+        }
     }
     selectChange(event) {
         this.setState({ selectValue: event.target.value })
@@ -88,17 +102,12 @@ export default class ExportHistory extends Component {
     async rowData() {
         try {
             if (this.state.selectValue === 'none') {
-                this.setState({ error: true, message: 'Please select work type for search.' });
-                setTimeout(() => {
-                    this.setState({ error: false, })
-                }, 3000);
+                this.getAllData();
                 return;
             }
-            this.setState({ loading: true, })
+            this.setState({ loading: true, rowData: [] })
             const body = {
                 workType: this.state.selectValue,
-                page: this.state.page,
-                perPage: this.state.perPage
             };
             const response = await app_jsonInstance().patch(`/export/history`, body);
             this.setState({ loading: false, rowData: response.data.data });
@@ -145,7 +154,7 @@ export default class ExportHistory extends Component {
                                 defaultValue={this.state.selectValue}
                                 onChange={this.selectChange}
                             >
-                                <option value={'none'}>-</option>
+                                <option value={'none'}>All</option>
                                 <option value={'Domestic-DIE'}>Domestic-DIE</option>
                                 <option value={'Domestic'}>Domestic</option>
                                 <option value={'Oversea'}>Oversea</option>
@@ -183,7 +192,7 @@ export default class ExportHistory extends Component {
                                 checkboxSelection={true}
                                 onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
                                 pageSize={10}
-                                onPageChange={(params) => this.nextPage(params)}
+                                // onPageChange={(params) => this.nextPage(params)}
                                 pagination={true}
                             />
                         </div>
