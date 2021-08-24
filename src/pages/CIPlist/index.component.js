@@ -148,7 +148,7 @@ class CIPlist extends Component {
         }
     }
     rowClicked(event) {
-        if (event.row.status === 'reject') {
+        if (event.row.status === 'reject' || event.row.commend !== null) {
             this.setState({ error: true, message: event.row.commend });
 
             setTimeout(() => {
@@ -236,14 +236,14 @@ class CIPlist extends Component {
         const columns = [
             {
                 field: 'cipNo', headerName: 'CIP No.', width: 100, renderCell: (params) => {
-                    if (params.row.status === 'reject') {
+                    if (params.row.commend !== null || params.row.status === 'reject') {
                         return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cipNo}</div>
                     }
                 }
             },
             {
                 field: 'subCipNo', headerName: 'Sub CIP No.', width: 95, renderCell: (params) => {
-                    if (params.row.status === 'reject') {
+                    if (params.row.commend !== null || params.row.status === 'reject') {
                         return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.subCipNo}</div>
                     }
                 }
@@ -251,28 +251,28 @@ class CIPlist extends Component {
             // { field: 'vendor', headerName: 'Vendor', width: 130 },
             {
                 field: 'name', headerName: 'Name', width: 375, renderCell: (params) => {
-                    if (params.row.status === 'reject') {
+                    if (params.row.commend !== null || params.row.status === 'reject') {
                         return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.name}</div>
                     }
                 }
             },
             {
                 field: 'qty', headerName: 'Qty.', width: 80, renderCell: (params) => {
-                    if (params.row.status === 'reject') {
+                    if (params.row.commend !== null || params.row.status === 'reject') {
                         return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.qty}</div>
                     }
                 }
             },
             {
                 field: 'totalOfCip', headerName: 'Total (THB)', width: 120, renderCell: (params) => {
-                    if (params.row.status === 'reject') {
+                    if (params.row.commend !== null || params.row.status === 'reject') {
                         return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.totalOfCip}</div>
                     }
                 }
             },
             {
                 field: 'cc', headerName: 'CC', width: 80, renderCell: (params) => {
-                    if (params.row.status === 'reject') {
+                    if (params.row.commend !== null || params.row.status === 'reject') {
                         return <div style={{ color: 'rgb(243 1 1)' }}>{params.row.cc}</div>
                     }
                 }

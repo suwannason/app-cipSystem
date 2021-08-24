@@ -27,7 +27,7 @@ class Approve extends Component {
             dataSelected: [],
             error: false,
             preview: false,
-            message: 'Have some error.',
+            message: 'Loading.',
             rowclick: null,
             files: null,
             page: '',
@@ -41,7 +41,8 @@ class Approve extends Component {
         this.close = this.close.bind(this);
         this.download = this.download.bind(this);
         this.upload = this.upload.bind(this);
-        this.openTextInput = this.openTextInput.bind(this)
+        this.openTextInput = this.openTextInput.bind(this);
+        this.getData = this.getData.bind(this)
     }
 
     componentDidMount() {
@@ -91,14 +92,18 @@ class Approve extends Component {
     }
     async getData() {
         try {
+            this.setState({ loading: true, })
             const response = await app_jsonInstance().get(`/approval/cc`);
+            setTimeout(() => {
+                this.setState({
+                    data: response.data.data,
+                    all: response.data.data,
+                    headerMessage: response.data.message,
+                    page: response.data.permission,
+                    loading: false,
+                });
+            }, 300);
 
-            this.setState({
-                data: response.data.data,
-                all: response.data.data,
-                headerMessage: response.data.message,
-                page: response.data.permission
-            });
         } catch (error) {
             console.log(error.stack);
 
@@ -294,6 +299,7 @@ class Approve extends Component {
                         pageSize={10}
                         checkboxSelection
                         onRowClick={(row) => this.preview(row)}
+                        loading={this.state.loading}
                         // onRowSelected={(row) => this.selectionRow(row)}
                         onSelectionModelChange={(row) => this.onSelectionModelChange(row)}
                         disableSelectionOnClick={true}
