@@ -107,7 +107,7 @@ class Import extends Component {
             }, 2000);
         } catch (error) {
             if (error.response) {
-                this.setState({ error: true, message: (error.response.data.message) ? error.response.data.message : 'Some record duplicated please remove from file before upload.' })
+                this.setState({ error: true, message: (error.response.data.message) ? error.response.data.message : 'Database input error.' })
             }
             setTimeout(() => {
                 this.setState({ error: false, })

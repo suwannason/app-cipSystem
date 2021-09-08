@@ -147,7 +147,7 @@ class ApprovalBudget extends Component {
             { field: 'cipNo', headerName: 'CIP No.', width: 120 },
             { field: 'subCipNo', headerName: 'Sub CIP No.', width: 120 },
             { field: 'vendor', headerName: 'Vendor', width: 130 },
-            { field: 'name', headerName: 'Name', width: 200, },
+            { field: 'name', headerName: 'Name', width: 270, },
             { field: 'qty', headerName: 'Qty.', width: 80 },
             { field: 'totalThb', headerName: 'Total (THB)', width: 130, },
             // { field: 'cc', headerName: 'CC', width: 80 },

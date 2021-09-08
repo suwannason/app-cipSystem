@@ -1,7 +1,7 @@
 
 import React, { Component, } from 'react';
 
-import { Grid, FormHelperText, NativeSelect, InputLabel, FormControl, Button } from '@material-ui/core';
+import { Grid, FormHelperText, NativeSelect, InputLabel, FormControl, Button, TextField } from '@material-ui/core';
 
 import { DataGrid } from '@material-ui/data-grid';
 import { app_jsonInstance, blob_response, none_headersInstance } from '../../configurations/instance';
@@ -17,15 +17,22 @@ export default class ExportHistory extends Component {
 
         this.state = {
             selectValue: 'none',
-            rowData: [],
+            data: [],
+            all: [],
             loading: false,
+            cc: '',
+            invDate: '',
+            cipNo: '',
         };
         this.selectChange = this.selectChange.bind(this);
         this.rowData = this.rowData.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.exportClick = this.exportClick.bind(this);
         this.onSelectionModelChange = this.onSelectionModelChange.bind(this);
-        this.getAllData = this.getAllData.bind(this)
+        this.getAllData = this.getAllData.bind(this);
+        this.ccChange = this.ccChange.bind(this);
+        this.cipNoChange = this.cipNoChange.bind(this);
+        this.invDateChange = this.invDateChange.bind(this);
     }
     onSelectionModelChange(rows) {
         this.setState({
@@ -35,21 +42,99 @@ export default class ExportHistory extends Component {
     componentDidMount() {
         this.getAllData();
     }
-    
+
     async getAllData() {
         try {
             this.setState({ loading: true, });
             const response = await none_headersInstance().get(`/export/history`);
-            
+
             this.setState({ loading: false, });
 
-            this.setState({ rowData: response.data.data });
+            this.setState({ data: response.data.data, all: response.data.data });
         } catch (err) {
             console.log(err.stack)
         }
     }
     selectChange(event) {
         this.setState({ selectValue: event.target.value })
+    }
+    ccChange(event) {
+        this.setState({ cc: event.target.value })
+        
+        if (event.target.value !== '') {
+            if (this.state.cipNo !== '') {
+                this.setState({
+                    data: this.state.all.filter((item) => {
+                        return item.cc.indexOf(event.target.value) !== -1 && item.cipNo.indexOf(event.target.value) !== -1
+                    })
+                });
+            } else {
+                this.setState({
+                    data: this.state.data.filter((item) => {
+                        return item.cc.indexOf(event.target.value) !== -1
+                    })
+                });
+            }
+        } else {
+            if (this.state.cipNo !== '') {
+                this.setState({
+                    data: this.state.all.filter((item) => {
+    
+                        return item.cipNo.indexOf(this.state.cipNo) !== -1 && item.cc.indexOf(event.target.value) !== -1
+                    })
+                });
+            } else {
+                this.setState({
+                    data: this.state.all.filter((item) => {
+    
+                        return item.cc.indexOf(event.target.value) !== -1
+                    })
+                });
+            }
+
+        }
+
+    }
+    cipNoChange(event) {
+        this.setState({ cipNo: event.target.value });
+        if (event.target.value !== '') {
+            if (this.state.cipNo.length > event.target.value.length) {
+                this.setState({
+                    data: this.state.all.filter((item) => {
+
+                        return item.cipNo.indexOf(event.target.value) !== -1
+                    })
+                });
+            } else {
+                this.setState({
+                    data: this.state.data.filter((item) => {
+
+                        return item.cipNo.indexOf(event.target.value) !== -1
+                    })
+                });
+            }
+        } else {
+            this.setState({
+                data: this.state.all.filter((item) => {
+
+                    return item.cipNo.indexOf(event.target.value) !== -1
+                })
+            });
+        }
+    }
+    invDateChange(event) {
+        this.setState({ invDate: event.target.value });
+
+        if (event.target.value !== '') {
+            this.setState({
+                data: this.state.all.filter((item) => {
+                    return item.cc.indexOf(this.state.cc) !== -1
+                           && item.cipNo.indexOf(this.state.cipNo) !== -1
+                           && item.invDate.indexOf(event.target.value) !== -1
+                })
+            });
+        }
+
     }
     async exportClick() {
         try {
@@ -110,7 +195,7 @@ export default class ExportHistory extends Component {
                 workType: this.state.selectValue,
             };
             const response = await app_jsonInstance().patch(`/export/history`, body);
-            this.setState({ loading: false, rowData: response.data.data });
+            this.setState({ loading: false, data: response.data.data, all: response.data.data });
         } catch (err) {
             console.log(err.stack);
         }
@@ -118,7 +203,7 @@ export default class ExportHistory extends Component {
     async nextPage(params) {
         // console.log(params);
         if (params.page + 1 > this.state.page) {
-            await this.setState({ page: this.state.page + 1});
+            await this.setState({ page: this.state.page + 1 });
 
             const body = {
                 workType: this.state.selectValue,
@@ -126,7 +211,7 @@ export default class ExportHistory extends Component {
                 perPage: this.state.perPage,
             };
             const response = await app_jsonInstance().patch(`/export/history`, body);
-            await this.setState({ rowData: [...this.state.rowData, ...response.data.data ]});
+            await this.setState({ data: [...this.state.data, ...response.data.data] });
         }
     }
     render() {
@@ -146,7 +231,7 @@ export default class ExportHistory extends Component {
         return (
             <>
                 <Grid container>
-                {error}{loading}{success}
+                    {error}{loading}{success}
                     <Grid item xs={3}>
                         <FormControl>
                             <InputLabel htmlFor="uncontrolled-native">Work type</InputLabel>
@@ -171,13 +256,30 @@ export default class ExportHistory extends Component {
                         <Button variant="outlined" size="medium" style={{ backgroundColor: '#009688', color: 'aliceblue' }} onClick={this.exportClick}>Exports</Button>
                     </Grid>
                 </Grid>
+                <Grid container spacing={1}>
+                    <Grid item xs={3}>
+                        <TextField label="CIP No." onChange={this.cipNoChange} value={this.state.cipNo} />
+                    </Grid>
 
+                    <Grid item xs={3}>
+                        <TextField label="CC" onChange={this.ccChange} value={this.state.cc} />
+                    </Grid>
+
+                    <Grid item xs={3}>
+                        <TextField label="Inv.Date" onChange={this.invDateChange} value={this.state.invDate} />
+                        {/* <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 81 181)', color: 'aliceblue', }} onClick={this.openDeptinput}> Input </Button> */}
+
+                    </Grid>
+                    <Grid item xs={3}>
+                        {/* <Button variant="outlined" id="input" style={{ backgroundColor: 'rgb(63 81 181)', color: 'aliceblue', }} onClick={this.openDeptinput}> Input </Button> */}
+
+                    </Grid>
+                </Grid>
                 <Grid container style={{ marginTop: 'calc(3%)' }}>
-
                     <Grid item xs={12}>
                         <div style={{ width: '100%', height: '600px' }}>
                             <DataGrid
-                                rows={this.state.rowData}
+                                rows={this.state.data}
                                 columns={[
                                     { field: 'cipNo', headerName: 'CIP No.', width: 120 },
                                     { field: 'subCipNo', headerName: 'Sub CIP No.', width: 130 },

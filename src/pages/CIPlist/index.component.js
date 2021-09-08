@@ -294,7 +294,7 @@ class CIPlist extends Component {
                         <Button variant="contained" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(1%)' }} onClick={this.download}> Download </Button>
                         <Button variant="contained" id="edit" style={{ backgroundColor: '#FF9800', color: 'aliceblue', }} onClick={this.openEdit}> Edit </Button>
 
-                        <Button variant="text" id="edit" style={{ backgroundColor: '#e91e63', color: 'aliceblue', marginLeft: 'calc(5%)'}} onClick={this.delete}> Delete </Button>
+                        <Button variant="text" id="edit" style={{ backgroundColor: '#e91e63', color: 'aliceblue', marginLeft: 'calc(5%)', visibility: 'hidden' }} onClick={this.delete}> Delete </Button>
                     </Grid>
                 </Grid>
                 <Grid container spacing={1}>
