@@ -23,6 +23,7 @@ export default class ExportHistory extends Component {
             cc: '',
             invDate: '',
             cipNo: '',
+            dataSelected: [],
         };
         this.selectChange = this.selectChange.bind(this);
         this.rowData = this.rowData.bind(this);
@@ -177,6 +178,7 @@ export default class ExportHistory extends Component {
 
             }, 3000);
         } catch (err) {
+            console.log(err.stack);
             this.setState({ error: true, message: err.response.data.message, exportLoading: false });
 
             setTimeout(() => {

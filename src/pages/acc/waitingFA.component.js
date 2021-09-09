@@ -157,7 +157,7 @@ class WaitingFA extends Component {
                         </Card>
                     </Grid>
                 </Grid>
-                <div style={{ height: 600, width: 'calc(100%)', marginTop: 'calc(1%)' }}>
+                <div style={{ height: 630, width: 'calc(100%)', marginTop: 'calc(1%)' }}>
                     <DataGrid
                         rows={this.state.data}
                         columns={columns}
