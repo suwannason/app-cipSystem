@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Grid, Card, Button } from '@material-ui/core';
 import PreviewIcon from '@material-ui/icons/Pageview'
 import { DataGrid, } from '@material-ui/data-grid';
-import { app_jsonInstance } from '../../configurations/instance';
+import { app_jsonInstance, form_dataInstance, blob_response } from '../../configurations/instance';
 import { reload } from '../../middleware/index';
 import ErrorBar from '../../components/errorBar/index.component';
 import Preview from '../approval/components/moreDetail.component';
@@ -34,7 +34,9 @@ class Approve extends Component {
         this.reject = this.reject.bind(this);
         this.preview = this.preview.bind(this);
         this.close = this.close.bind(this);
-        this.boiSelectionChange = this.boiSelectionChange.bind(this)
+        this.boiSelectionChange = this.boiSelectionChange.bind(this);
+        this.download = this.download.bind(this);
+        this.sendApproveUpload = this.sendApproveUpload.bind(this)
     }
 
     componentDidMount() {
@@ -71,6 +73,39 @@ class Approve extends Component {
             return;
         }
     }
+    async download() {
+        try {
+            const body = {};
+            const id = [];
+            this.state.all.forEach((item) => {
+                id.push(item.id);
+            });
+            body.id = id;
+            const response = await blob_response().patch(`/approval/download`, body);
+
+            if (window.navigator.msSaveBlob) //IE & Edge
+            { //msSaveBlob only available for IE & Edge
+                console.log("IE & Edge")
+                // const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const blob = new File([response.data], "itc-confirm.xlsx")
+                window.navigator.msSaveBlob(blob, `itc-confirm.xlsx`);
+            }
+            else //Chrome & FF
+            {
+                console.log("Chrome")
+                const url = window.URL.createObjectURL(new File([response.data], "itc-confirm.xlsx"));
+                // const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `itc-confirm.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+            }
+
+        } catch (err) {
+            console.log(err.stack);
+        }
+    }
     async check() {
         this.setState({ loading: true, message: 'Approving CIP.' });
         if (this.state.boiConfig.length === 0) {
@@ -83,7 +118,6 @@ class Approve extends Component {
         const body = {
             confirm: this.state.boiConfig,
         };
-        console.log(this.state.boiConfig)
         try {
             const response = await app_jsonInstance().put(`/itc/confirm`, body);
             this.setState({ message: response.data.message, success: true, loading: false, });
@@ -106,6 +140,28 @@ class Approve extends Component {
             dataSelected: rows.selectionModel,
         });
 
+    }
+    uploadClick() {
+        document.getElementById('itc_upload').click();
+    }
+    async sendApproveUpload() {
+        try {
+            let body = new FormData();
+            let element = document.querySelector('#itc_upload');
+
+            body.append('file', element.files[0]);
+            const response = await form_dataInstance().post(`/itc/upload`, body);
+            
+            this.setState({ success: true, message: response.data.message });
+
+            setTimeout(() => {
+                this.setState({ success: false,})
+                this.getData();
+            }, 2000);
+
+        } catch (err) {
+            console.log(err.stack);
+        }
     }
     close() {
         this.setState({ preview: false, })
@@ -136,7 +192,7 @@ class Approve extends Component {
                     return <>
                         <Grid container>
                             <Grid item xs={6} style={{ padding: '10px 10px 10px 0px' }}>
-                                <select style={{ padding: '5px'}} onChange={(event) => this.boiSelectionChange(params.id, event.target.value)}>
+                                <select style={{ padding: '5px' }} onChange={(event) => this.boiSelectionChange(params.id, event.target.value)}>
                                     <option selected value="-">-</option>
                                     <option value="BOI">BOI</option>
                                     <option value="NON BOI">NON BOI</option>
@@ -175,7 +231,16 @@ class Approve extends Component {
 
                 <Grid container spacing={0}>
                     <Grid item xs={9}>
-
+                        <input type="file" id="itc_upload" hidden onChange={this.sendApproveUpload} />
+                        <Button
+                            style={{ marginRight: 'calc(1%)', backgroundColor: '#3f51b5', color: 'aliceblue' }}
+                            variant="contained"
+                            onClick={this.uploadClick}
+                        >upload</Button>
+                        <Button variant="contained"
+                            style={{ backgroundColor: '#2196f3', color: 'aliceblue' }}
+                            onClick={this.download}
+                        >download</Button>
                     </Grid>
                     <Grid item xs={3}>
                         <Card elevation={0} style={{ padding: 'calc(2%)', textAlign: "center", backgroundColor: 'rgb(238 235 243)' }} variant="outlined" >
