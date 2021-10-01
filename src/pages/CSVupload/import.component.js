@@ -107,7 +107,7 @@ class Import extends Component {
             }, 2000);
         } catch (error) {
             if (error.response) {
-                this.setState({ error: true, message: (error.response.data.message) ? error.response.data.message : 'Database input error.' })
+                this.setState({ error: true, message: (error.response.data.message) ? error.response.data.message : 'Database input error. Some text in field have longer text.' })
             }
             setTimeout(() => {
                 this.setState({ error: false, })
