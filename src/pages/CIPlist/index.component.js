@@ -31,6 +31,7 @@ class CIPlist extends Component {
             message: 'Error',
             edit: false,
             success: false,
+            showDelete: false,
         };
         this.getData = this.getData.bind(this);
         this.close = this.close.bind(this);
@@ -159,7 +160,7 @@ class CIPlist extends Component {
     async getData() {
         try {
             const response = await app_jsonInstance().get(`/cip/list`);
-            this.setState({ data: response.data.data, all: response.data.data })
+            this.setState({ data: response.data.data, all: response.data.data, showDelete: response.data.isAcc })
         } catch (error) {
             console.log(error.stack);
 
@@ -203,7 +204,7 @@ class CIPlist extends Component {
             for (const item of this.state.dataSelected) {
                 request.push(none_headersInstance().delete(`/cip/${item}`))
             }
-           await Promise.all(request);
+            await Promise.all(request);
             this.setState({ success: true, message: 'Delete CIP success.' });
 
             setTimeout(() => {
@@ -293,8 +294,10 @@ class CIPlist extends Component {
                     <Grid item xs={12} style={{ textAlign: 'right' }}>
                         <Button variant="contained" id="input" style={{ backgroundColor: '#03a9f4', color: 'aliceblue', marginRight: 'calc(1%)' }} onClick={this.download}> Download </Button>
                         <Button variant="contained" id="edit" style={{ backgroundColor: '#FF9800', color: 'aliceblue', }} onClick={this.openEdit}> Edit </Button>
+                        {(this.state.showDelete === true) ?
+                            <Button variant="text" id="edit" style={{ backgroundColor: '#e91e63', color: 'aliceblue', marginLeft: 'calc(5%)', }} onClick={this.delete}> Delete </Button>
+                            : ''}
 
-                        <Button variant="text" id="edit" style={{ backgroundColor: '#e91e63', color: 'aliceblue', marginLeft: 'calc(5%)', visibility: 'hidden' }} onClick={this.delete}> Delete </Button>
                     </Grid>
                 </Grid>
                 <Grid container spacing={1}>
